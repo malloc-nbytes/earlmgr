@@ -162,7 +162,7 @@ fn create_new_earl_project() {
     let cwd = ".";
 
     if newdir == "Y" || newdir == "y" {
-        OS.mkdir(name);
+        OS::mkdir(name);
         cwd = name;
     }
 
@@ -183,7 +183,7 @@ fn create_new_earl_project() {
     }
 
     println("Created new EARL project at: ", cwd, " with contents:");
-    OS.ls(cwd).foreach(|el| { println("  ", el); });
+    OS::ls(cwd).foreach(|el| { println("  ", el); });
 }
 
 fn handle_interaction() {
