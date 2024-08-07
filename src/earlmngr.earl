@@ -1,80 +1,9 @@
-#!/usr/local/bin/earl
+#!/usr/bin/env earl
 
 mod Main
 
 import "std/os.earl"
-
-let main_template =
-"mod Main
-
-# Make sure the read the docs!
-# https://github.com/malloc-nbytes/EARL/blob/main/EARL-language-reference.html
-
-# Imports go here...
-
-fn main() {
-    println(\"Hello EARL!\");
-    return 0;
-}
-
-main();
-";
-
-
-# Changelog taken from https://gist.github.com/juampynr/4c18214a8eb554084e21d6e288a18a2c
-let changelog_template =
-"# Change Log
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](http://keepachangelog.com/)
-and this project adheres to [Semantic Versioning](http://semver.org/).
-
-## [Unreleased] - yyyy-mm-dd
-
-Here we write upgrading notes for brands. It's a team effort to make them as
-straightforward as possible.
-
-### Added
-- [PROJECTNAME-XXXX](http://tickets.projectname.com/browse/PROJECTNAME-XXXX)
-  MINOR Ticket title goes here.
-- [PROJECTNAME-YYYY](http://tickets.projectname.com/browse/PROJECTNAME-YYYY)
-  PATCH Ticket title goes here.
-
-### Changed
-
-### Fixed
-
-## [1.2.4] - 2017-03-15
-
-Here we would have the update steps for 1.2.4 for people to follow.
-
-### Added
-
-### Changed
-
-- [PROJECTNAME-ZZZZ](http://tickets.projectname.com/browse/PROJECTNAME-ZZZZ)
-  PATCH Drupal.org is now used for composer.
-
-### Fixed
-
-- [PROJECTNAME-TTTT](http://tickets.projectname.com/browse/PROJECTNAME-TTTT)
-  PATCH Add logic to runsheet teaser delete to delete corresponding
-  schedule cards.
-
-## [1.2.3] - 2017-03-14
-
-### Added
-
-### Changed
-
-### Fixed
-
-- [PROJECTNAME-UUUU](http://tickets.projectname.com/browse/PROJECTNAME-UUUU)
-  MINOR Fix module foo tests
-- [PROJECTNAME-RRRR](http://tickets.projectname.com/browse/PROJECTNAME-RRRR)
-  MAJOR Module foo's timeline uses the browser timezone for date resolution";
-
-let readme_template = "# README ";
+import "templates.earl"
 
 let HELP_SHORT = 'h';
 let HELP_LONG = "help";
@@ -86,11 +15,11 @@ let progname = "";
 
 @world
 fn usage() {
-    print("Usage: ", progname, " [options]");
-    print();
-    print("Options:");
-    print("  -", HELP_SHORT, ", --", HELP_LONG, "       Print this message");
-    print("  -", VERSION_SHORT, ", --", VERSION_LONG, "    Print version information");
+    println("Usage: ", progname, " [options]");
+    println();
+    println("Options:");
+    println("  -", HELP_SHORT, ", --", HELP_LONG, "       Print this message");
+    println("  -", VERSION_SHORT, ", --", VERSION_LONG, "    Print version information");
     exit(1);
 }
 
@@ -148,7 +77,7 @@ fn get_user_input(msg, possible) {
                 return possible[i];
             }
         }
-        println("invalid choice `", inp, "`. Retrying");
+        println("Invalid choice `", inp);
     }
 }
 
@@ -167,18 +96,18 @@ fn create_new_earl_project() {
     }
 
     let f1 = open(cwd+"/main.earl", "w");
-    f1.write(main_template);
+    f1.write(Templates::main);
     f1.close();
 
     if create_changelog == 'Y' || create_changelog == 'y' {
         let f2 = open(cwd+"/CHANGELOG.md", "w");
-        f2.write(changelog_template);
+        f2.write(Templates::changelog);
         f2.close();
     }
 
     if create_readme == 'Y' || create_readme == 'y' {
         let f3 = open(cwd+"/README.md", "w");
-        f3.write(readme_template + name + "\n");
+        f3.write(Templates::readme + name + "\n");
         f3.close();
     }
 
@@ -198,9 +127,9 @@ fn handle_interaction() {
         println(el[0], el[1], el[2]);
     });
 
-    let inp = input();
 
     while true {
+        let inp = input();
         match inp {
             "0" -> {
                 create_new_earl_project();
@@ -210,7 +139,7 @@ fn handle_interaction() {
                 unimplemented("help");
             }
             _ -> {
-                println("Illegal input. Retrying...");
+                println("Illegal input");
             }
         }
     }
