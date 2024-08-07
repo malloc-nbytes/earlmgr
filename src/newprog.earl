@@ -1,0 +1,52 @@
+mod NewProj
+
+import "std/os.earl"
+import "templates.earl"
+
+fn get_user_input(msg, possible) {
+    while (1) {
+        let inp = input(msg);
+        if len(possible) == 0 {
+            return inp;
+        }
+        for i in 0..len(possible) {
+            if inp == possible[i] {
+                return possible[i];
+            }
+        }
+        println("Invalid choice `", inp);
+    }
+}
+
+@pub fn create_new_earl_project() {
+    let name = get_user_input("Enter project name: ", []);
+    let newdir = get_user_input("Create a new directory? [Y/n] ", ["Y", "y", "N", "n"]);
+    let create_changelog = get_user_input("Create a changelog? [Y/n] ", ["Y", "y", "N", "n"]);
+    let create_readme = get_user_input("Create a readme? [Y/n] ", ["Y", "y", "N", "n"]);
+
+    let cwd = ".";
+
+    if newdir == "Y" || newdir == "y" {
+        OS::mkdir(name);
+        cwd = name;
+    }
+
+    let f1 = open(cwd+"/main.earl", "w");
+    f1.write(Templates::main);
+    f1.close();
+
+    if create_changelog == 'Y' || create_changelog == 'y' {
+        let f2 = open(cwd+"/CHANGELOG.md", "w");
+        f2.write(Templates::changelog);
+        f2.close();
+    }
+
+    if create_readme == 'Y' || create_readme == 'y' {
+        let f3 = open(cwd+"/README.md", "w");
+        f3.write(Templates::readme + name + "\n");
+        f3.close();
+    }
+
+    println("Created new EARL project at `", cwd, "` with contents:");
+    OS::ls(cwd).foreach(|el| { println("  ", el); });
+}

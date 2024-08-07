@@ -2,8 +2,10 @@
 
 mod Main
 
-import "std/os.earl"
-import "templates.earl"
+import "newprog.earl"
+
+let progname = "";
+let version = "0.0.1";
 
 let HELP_SHORT = 'h';
 let HELP_LONG = "help";
@@ -11,15 +13,16 @@ let HELP_LONG = "help";
 let VERSION_SHORT = 'v';
 let VERSION_LONG = "version";
 
-let progname = "";
+let NEW_PROJ_SHORT = "n";
+let NEW_PROJ_LONG = "new";
 
-@world
-fn usage() {
+@world fn usage() {
     println("Usage: ", progname, " [options]");
     println();
     println("Options:");
-    println("  -", HELP_SHORT, ", --", HELP_LONG, "       Print this message");
-    println("  -", VERSION_SHORT, ", --", VERSION_LONG, "    Print version information");
+    println("  -", HELP_SHORT, ", --", HELP_LONG, " ... Print this message");
+    println("  -", VERSION_SHORT, ", --", VERSION_LONG, " ... Print version information");
+    println("  -", NEW_PROJ_SHORT, ", --", NEW_PROJ_LONG, " ... Create a new EARL project template");
     exit(1);
 }
 
@@ -27,132 +30,46 @@ fn help() {
     usage();
 }
 
-@world
-fn handle_args(@ref args) {
+@world fn version() {
+    println("earlmngr " + version);
+}
+
+@world fn handle_args(@ref args) {
+    let unknown_arg = |inp| {
+        panic("unknown argument `" + inp + "`, see --" + HELP_LONG + " or --" + HELP_SHORT);
+    };
+
     for i in 0..len(args) {
         let word = args[i];
 
         if len(word) > 1 && word[0] == '-' && word[1] == '-' {
             match word.substr(2, len(word)) {
-                HELP_LONG -> {
-                    unimplemented(HELP_LONG);
-                }
-                VERSION_LONG -> {
-                    unimplemented(VERSION_LONG);
-                }
-                _ -> {
-                    unimplemented("unknown arg");
-                }
+                HELP_LONG     -> { help(); }
+                VERSION_LONG  -> { version(); }
+                NEW_PROJ_LONG -> { NewProj::create_new_earl_project(); }
+                _             -> { unknown_arg(word); }
             }
         }
         else if word[0] == '-' {
             for j in 1..len(word) {
                 match word[j] {
-                    HELP_SHORT -> {
-                        unimplemented(HELP_SHORT);
-                    }
-                    VERSION_SHORT -> {
-                        unimplemented(VERSION_SHORT);
-                    }
-                    _ -> {
-                        unimplemented("unknown arg");
-                    }
+                    HELP_SHORT    -> { help(); }
+                    VERSION_SHORT -> { version(); }
+                    _             -> { unknown_arg(word); }
                 }
             }
         }
         else {
-            unimplemented("no hyph");
+            unknown_arg(word);
         }
     }
 }
 
-fn get_user_input(msg, possible) {
-    while (1) {
-        let inp = input(msg);
-        if len(possible) == 0 {
-            return inp;
-        }
-        for i in 0..len(possible) {
-            if inp == possible[i] {
-                return possible[i];
-            }
-        }
-        println("Invalid choice `", inp);
-    }
-}
-
-@world
-fn create_new_earl_project() {
-    let name = get_user_input("Enter project name: ", []);
-    let newdir = get_user_input("Create a new directory? [Y/n] ", ["Y", "y", "n"]);
-    let create_changelog = get_user_input("Create a changelog? [Y/n] ", ["Y", "y", "n"]);
-    let create_readme = get_user_input("Create a readme? [Y/n] ", ["Y", "y", "n"]);
-
-    let cwd = ".";
-
-    if newdir == "Y" || newdir == "y" {
-        OS::mkdir(name);
-        cwd = name;
-    }
-
-    let f1 = open(cwd+"/main.earl", "w");
-    f1.write(Templates::main);
-    f1.close();
-
-    if create_changelog == 'Y' || create_changelog == 'y' {
-        let f2 = open(cwd+"/CHANGELOG.md", "w");
-        f2.write(Templates::changelog);
-        f2.close();
-    }
-
-    if create_readme == 'Y' || create_readme == 'y' {
-        let f3 = open(cwd+"/README.md", "w");
-        f3.write(Templates::readme + name + "\n");
-        f3.close();
-    }
-
-    println("Created new EARL project at: ", cwd, " with contents:");
-    OS::ls(cwd).foreach(|el| { println("  ", el); });
-}
-
-fn handle_interaction() {
-    println("Choose an option:");
-
-    let available_inputs = [
-        ["New EARL Project [", "0", "]"],
-        ["Help [", "1", "]"],
-    ];
-
-    available_inputs.foreach(|el| {
-        println(el[0], el[1], el[2]);
-    });
-
-
-    while true {
-        let inp = input();
-        match inp {
-            "0" -> {
-                create_new_earl_project();
-                break;
-            }
-            "1" -> {
-                unimplemented("help");
-            }
-            _ -> {
-                println("Illegal input");
-            }
-        }
-    }
-    println("Done");
-}
-
-@world
-fn main() {
+@world fn main() {
     let args = argv();
     progname = args[0];
     args.pop(0);
     handle_args(args);
-    handle_interaction();
 }
 
 main();
