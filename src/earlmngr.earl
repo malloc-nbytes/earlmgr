@@ -1,8 +1,8 @@
 #!/usr/bin/env earl
 
-mod Main
+module Main
 
-import "newprog.earl"
+import "newprog.earl" almost
 
 let progname = "";
 let version = "0.0.1";

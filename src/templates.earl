@@ -1,4 +1,4 @@
-mod Templates
+module Templates
 
 @pub let main =
 "mod Main
