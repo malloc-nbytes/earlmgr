@@ -1,7 +1,7 @@
 module NewProj
 
-import "std/os.earl" full
-import "templates.earl" almost
+import "std/system.earl"; full
+import "templates.earl"; almost
 
 fn get_user_input(msg, possible) {
     while (1) {
@@ -9,7 +9,7 @@ fn get_user_input(msg, possible) {
         if len(possible) == 0 {
             return inp;
         }
-        for i in 0..len(possible) {
+        for i in 0 to len(possible) {
             if inp == possible[i] {
                 return possible[i];
             }
@@ -27,7 +27,7 @@ fn get_user_input(msg, possible) {
     let cwd = ".";
 
     if newdir == "Y" || newdir == "y" {
-        OS::mkdir(name);
+        System::mkdir(name);
         cwd = name;
     }
 
@@ -48,5 +48,5 @@ fn get_user_input(msg, possible) {
     }
 
     println("Created new EARL project at `", cwd, "` with contents:");
-    OS::ls(cwd).foreach(|el| { println("  ", el); });
+    System::ls(cwd).foreach(|el| { println("  ", el); });
 }

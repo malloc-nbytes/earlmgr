@@ -2,19 +2,19 @@
 
 module Main
 
-import "newprog.earl" almost
+import "std/system.earl"; as sys
+import "newprog.earl";
 
 let progname = "";
-let version = "0.0.1";
 
-let HELP_SHORT = 'h';
-let HELP_LONG = "help";
-
-let VERSION_SHORT = 'v';
-let VERSION_LONG = "version";
-
-let NEW_PROJ_SHORT = "n";
-let NEW_PROJ_LONG = "new";
+@const let EARLMGR_PATH_ENVVAR = "EARLMGR_PATH";
+@const let version = "0.0.1";
+@const let HELP_SHORT = 'h';
+@const let HELP_LONG = "help";
+@const let VERSION_SHORT = 'v';
+@const let VERSION_LONG = "version";
+@const let NEW_PROJ_SHORT = "n";
+@const let NEW_PROJ_LONG = "new";
 
 @world fn usage() {
     println("Usage: ", progname, " [options]");
@@ -26,7 +26,7 @@ let NEW_PROJ_LONG = "new";
     exit(1);
 }
 
-fn help() {
+fn help_() {
     usage();
 }
 
@@ -39,21 +39,21 @@ fn help() {
         panic("unknown argument `" + inp + "`, see --" + HELP_LONG + " or --" + HELP_SHORT);
     };
 
-    for i in 0..len(args) {
+    for i in 0 to len(args) {
         let word = args[i];
 
         if len(word) > 1 && word[0] == '-' && word[1] == '-' {
             match word.substr(2, len(word)) {
-                HELP_LONG     -> { help(); }
+                HELP_LONG     -> { help_(); }
                 VERSION_LONG  -> { version(); }
                 NEW_PROJ_LONG -> { NewProj::create_new_earl_project(); }
                 _             -> { unknown_arg(word); }
             }
         }
         else if word[0] == '-' {
-            for j in 1..len(word) {
+            for j in 1 to len(word) {
                 match word[j] {
-                    HELP_SHORT    -> { help(); }
+                    HELP_SHORT    -> { help_(); }
                     VERSION_SHORT -> { version(); }
                     _             -> { unknown_arg(word); }
                 }
@@ -72,5 +72,40 @@ fn help() {
     handle_args(args);
 }
 
-main();
+@world fn init() {
+    let export_envvar_file = env("HOME")+"/.bashrc";
+    let install_dir = "/usr/local/bin/";
+
+    @world fn setup_env() {
+        println("It seems this is the first time that this is being run so some setup needs to be done.");
+
+        let inp = input(f"Where would you like earlmgr to be installed? [blank for {install_dir}]: ");
+        if inp != "" { install_dir = inp; }
+
+        println(f"install directory set to [{install_dir}]");
+        inp = input(f"Allow earlmgr to write `echo \"export {EARLMGR_PATH_ENVVAR}={install_dir}\" >> {export_envvar_file}`? [Y/n]: ");
+        if inp != "n" && inp != "N" && inp != "no" && inp != "No" {
+            $f"echo \"export {EARLMGR_PATH_ENVVAR}={install_dir}\" >> {export_envvar_file}";
+        }
+        else {
+            println(f"{EARLMGR_PATH_ENVVAR} will need to be set up in order to work properly");
+        }
+    }
+
+    @world fn install(install_dir) {
+        println("installing...");
+        let repo = "https://www.github.com/malloc-nbytes/earlmgr.git/";
+        $f"cd {install_dir} && sudo git clone {repo} earlmgr-assets";
+        $f"cd {install_dir} && sudo ln -s earlmgr-assets/src/earlmgr.earl earlmgr";
+        println("done");
+    }
+
+    if len(env(f"{EARLMGR_PATH_ENVVAR}")) == 0 {
+        # setup_env();
+        install(install_dir);
+    }
+}
+
+init();
+# main();
 
