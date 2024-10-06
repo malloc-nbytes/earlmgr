@@ -1,0 +1,62 @@
+#!/usr/bin/env earl
+
+module Main
+
+import "std/system.earl"; as sys
+
+@const let EARLMGR_MAIN_LINK = "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/earlmngr.earl";
+@const let EARLMGR_NEWPROG_LINK = "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/newprog.earl";
+@const let EARLMGR_TEMPLATES_LINK = "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/templates.earl";
+
+@const let EARLMGR_INCLUDES_ENVVAR = "EARLMGR_INCLUDES_PATH";
+@const let EARLMGR_PATH_ENVVAR = "EARLMGR_PATH";
+
+@world fn init() {
+    let export_envvar_file = env("HOME")+"/.bashrc";
+    let install_dir = "/usr/local/bin/";
+
+    @world fn setup_env(install_dir, export_envvar_file) {
+        println("It seems this is the first time that this is being run so some setup needs to be done.");
+
+        let inp = input(f"Where would you like earlmgr to be installed? [blank for {install_dir}]: ");
+        if inp != "" { install_dir = inp; }
+
+        println(f"install directory set to [{install_dir}]");
+        inp = input(f"Allow earlmgr to write `echo \"export {EARLMGR_PATH_ENVVAR}={install_dir}\" >> {export_envvar_file}`? [Y/n]: ");
+        if inp != "n" && inp != "N" && inp != "no" && inp != "No" {
+            $f"echo \"export {EARLMGR_PATH_ENVVAR}={install_dir}\" >> {export_envvar_file}";
+        }
+        else {
+            println(f"{EARLMGR_PATH_ENVVAR} will need to be set up in order to work properly");
+        }
+    }
+
+    @world fn install(install_dir) {
+        println("installing...");
+
+        let includepath = sys::cmdstr("earl --install-prefix").split(" ").back();
+        includepath = includepath.substr(0, len(includepath)-1)+"/include/EARL";
+        $f"sudo mkdir -v {includepath}/mgr";
+        includepath += "/mgr";
+
+        println("installing earlmgr libraries");
+        $f"sudo wget -P {includepath} {EARLMGR_NEWPROG_LINK}";
+        $f"sudo wget -P {includepath} {EARLMGR_TEMPLATES_LINK}";
+
+        println("done");
+    }
+
+    # if len(env(f"{EARLMGR_PATH_ENVVAR}")) == 0 {
+    if true {
+        # setup_env(install_dir, export_envvar_file);
+        install(install_dir);
+        # $f"wget {EARLMGR_MAIN_LINK}";
+        # $f"wget {EARLMGR_NEWPROG_LINK}";
+        # $f"wget {EARLMGR_TEMPLATES_LINK}";
+    }
+}
+
+init();
+
+import env(f"{EARLMGR_PATH_ENVVAR}")+"/";
+
