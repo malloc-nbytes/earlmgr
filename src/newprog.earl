@@ -1,7 +1,7 @@
 module NewProj
 
-import "std/system.earl"; full
-import "templates.earl"; almost
+import "std/system.earl";
+import "mgr/templates.earl";
 
 fn get_user_input(msg, possible) {
     while (1) {
