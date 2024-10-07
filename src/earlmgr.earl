@@ -51,16 +51,11 @@ import "std/io.earl"; as io
 @const let EARLMGR_MAIN_LINK = "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/earlmgr.earl";
 
 #-- The required modules for earlmgr.
-@const let EARLMGR_MODULE_LINKS = sys::ls(".")
-               .filter(|s| {
-                   # We don't want THIS file.
-                   return s != "./earlmgr.earl";
-               })
-               .map(|s| {
-                   # substr to get rid of "./"
-                   return "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/"
-                              + s.substr(2, len(s));
-               });
+@const let EARLMGR_MODULE_LINKS = (
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/newprog.earl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/templates.earl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/update-mgr.earl",
+);
 
 #-- Get the installation prefix from what is
 #-- stored in the EARL installation.
@@ -188,6 +183,8 @@ if len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
 
 unset_flag("--show-lets", "--show-muts");
 
+# Need to import these here because these
+# are not on the system on first launch of earlmgr.
 import "mgr/newprog.earl"; as NP
 import "mgr/templates.earl"; as TMPLTS
 import "mgr/update-mgr.earl"; as UPTMGR
@@ -197,6 +194,4 @@ import "mgr/update-mgr.earl"; as UPTMGR
 #     EARLMGR_IMPORT_LOC_ENVVAR,
 #     EARLMGR_MAIN_LINK,
 #     EARLMGR_MODULE_LINKS);
-
-
 

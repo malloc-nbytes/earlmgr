@@ -24,6 +24,14 @@ module UpdateEarl
 
 import "std/system.earl"; as sys
 
+#-- Name: update
+#-- Param: earlmgr_install_envvar: str
+#-- Param: import_envvar: str
+#-- Param: main_link: str
+#-- Param: module_links: list<str>
+#-- Returns: unit
+#-- Description: Updates the current installation of earlmgr as
+#-- well as all the modules it requires.
 @pub fn update(
     earlmgr_install_envvar,
     import_envvar,
