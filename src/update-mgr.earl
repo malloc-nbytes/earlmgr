@@ -39,7 +39,7 @@ import "std/system.earl"; as sys
     import_envvar,
     main_link,
     module_links) {
-    set_flag("--show-lets", "--show-bash");
+    set_flag("--show-bash");
 
     let local_files = sys::ls(".").filter(|s|{return s != "./earlmgr.earl";});
     if update_type == "local" {
