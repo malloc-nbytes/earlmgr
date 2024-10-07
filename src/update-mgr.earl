@@ -60,9 +60,9 @@ import "std/system.earl"; as sys
         $f"sudo chmod +x {earlmgr_loc}/earlmgr";
     }
     else {
-        println(f"sudo cp ./earlmgr.earl {earlmgr_loc}");
-        println(f"sudo mv {earlmgr_loc/earlmgr.earl {earlmgr_loc}/earlmgr}");
-        println(f"sudo chmod +x {earlmgr_loc}/earlmgr");
+        $f"sudo cp ./earlmgr.earl {earlmgr_loc}";
+        $f"sudo mv {earlmgr_loc}/earlmgr.earl {earlmgr_loc}/earlmgr";
+        $f"sudo chmod +x {earlmgr_loc}/earlmgr";
     }
 
     if update_type == "remote" {
@@ -75,7 +75,7 @@ import "std/system.earl"; as sys
     else {
         let files = sys::ls(".").filter(|s|{return s != "./earlmgr.earl";});
         foreach f in files {
-            println(f"sudo cp {f} {modules_loc}");
+            $f"sudo cp {f} {modules_loc}";
         }
     }
 
