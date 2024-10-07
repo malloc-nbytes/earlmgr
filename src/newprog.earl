@@ -40,7 +40,7 @@ fn get_user_input(msg, possible) {
     }
 }
 
-@pub fn create_new_earl_project() {
+@pub fn new_proj() {
     let name = get_user_input("Enter project name: ", []);
     let newdir = get_user_input("Create a new directory? [Y/n] ", ["Y", "y", "N", "n"]);
     let create_changelog = get_user_input("Create a changelog? [Y/n] ", ["Y", "y", "N", "n"]);

@@ -38,6 +38,8 @@ import "std/script.earl"; as scr
 import "std/system.earl"; as sys
 import "std/io.earl"; as io
 
+@const let VERSION = "0.0.1";
+
 #-- All of the required programs for setup.
 @const let REQ_PROGRAMS = ["wget", "git", "earl"];
 
@@ -189,16 +191,68 @@ unset_flag("--show-lets", "--show-muts");
 import "mgr/newprog.earl"; as NP
 import "mgr/templates.earl"; as TMPLTS
 import "mgr/update-mgr.earl"; as UPTMGR
-import "uninstall.earl"; as UNINST
+import "mgr/uninstall.earl"; as UNINST
 
-# UNINST::uninstall(
-#     EARLMGR_INSTALL_LOC_ENVVAR,
-#     EARLMGR_IMPORT_LOC_ENVVAR
-# );
+@world fn _help() {
+    println("Usage: earlmgr -- [options]");
+    println();
+    println("Options:");
+    println("    help                    Prints this message");
+    println("    version                 Print the version information");
+    println("    new                     Create a new EARL project");
+    println("    uninstall               Uninstall earlmgr and all associated modules");
+    println("    update [remote|local]   Update earlmgr and all associated modules");
+    exit(0);
+}
 
-# UPTMGR::update(
-#     EARLMGR_INSTALL_LOC_ENVVAR,
-#     EARLMGR_IMPORT_LOC_ENVVAR,
-#     EARLMGR_MAIN_LINK,
-#     EARLMGR_MODULE_LINKS);
+@world fn version() {
+    println(f"earlmgr v{VERSION}");
+    exit(0);
+}
+
+@world fn handle_args(args) {
+    match args[0] {
+        "help" -> {
+            _help();
+        }
+        "version" -> {
+            version();
+        }
+        "update" -> {
+            if len(args) != 2  || (args[1] != "remote" && args[1] != "local") {
+                println("expected either remote or local as a second argument");
+                exit(1);
+            }
+            UPTMGR::update(
+                args[1],
+                EARLMGR_INSTALL_LOC_ENVVAR,
+                EARLMGR_IMPORT_LOC_ENVVAR,
+                EARLMGR_MAIN_LINK,
+                EARLMGR_MODULE_LINKS);
+        }
+        "uninstall" -> {
+            UNINST::uninstall(
+                EARLMGR_INSTALL_LOC_ENVVAR,
+                EARLMGR_IMPORT_LOC_ENVVAR
+            );
+        }
+        "new" -> {
+            NP::new_proj();
+        }
+        _ -> {
+            println("unknown argument `", args[0], "`");
+        }
+    }
+    exit(0);
+}
+
+@world fn driver() {
+    if len(argv()) <= 1 {
+        _help();
+    }
+
+    handle_args(argv()[1:]);
+}
+
+driver();
 

@@ -25,6 +25,7 @@ module UpdateEarl
 import "std/system.earl"; as sys
 
 #-- Name: update
+#-- Param: update_type: str
 #-- Param: earlmgr_install_envvar: str
 #-- Param: import_envvar: str
 #-- Param: main_link: str
@@ -33,11 +34,14 @@ import "std/system.earl"; as sys
 #-- Description: Updates the current installation of earlmgr as
 #-- well as all the modules it requires.
 @pub fn update(
+    update_type,
     earlmgr_install_envvar,
     import_envvar,
     main_link,
     module_links) {
     set_flag("--show-lets", "--show-bash");
+
+    assert(update_type == "remote" || update_type == "local");
 
     println("Updating earlmgr");
 
@@ -50,12 +54,29 @@ import "std/system.earl"; as sys
         $f"sudo rm {mod}";
     }
 
-    $f"sudo wget -P {earlmgr_loc} {main_link}";
-    $f"sudo mv {earlmgr_loc}/earlmgr.earl {earlmgr_loc}/earlmgr";
-    $f"sudo chmod +x {earlmgr_loc}/earlmgr";
+    if update_type == "remote" {
+        $f"sudo wget -P {earlmgr_loc} {main_link}";
+        $f"sudo mv {earlmgr_loc}/earlmgr.earl {earlmgr_loc}/earlmgr";
+        $f"sudo chmod +x {earlmgr_loc}/earlmgr";
+    }
+    else {
+        println(f"sudo cp ./earlmgr.earl {earlmgr_loc}");
+        println(f"sudo mv {earlmgr_loc/earlmgr.earl {earlmgr_loc}/earlmgr}");
+        println(f"sudo chmod +x {earlmgr_loc}/earlmgr");
+    }
 
-    foreach link in module_links {
-        $f"sudo wget -P {modules_loc} {link}";
+    if update_type == "remote" {
+        foreach link in module_links {
+            if update_type == "remote" {
+                $f"sudo wget -P {modules_loc} {link}";
+            }
+        }
+    }
+    else {
+        let files = sys::ls(".").filter(|s|{return s != "./earlmgr.earl";});
+        foreach f in files {
+            println(f"sudo cp {f} {modules_loc}");
+        }
     }
 
     unset_flag("--show-lets", "--show-bash");
