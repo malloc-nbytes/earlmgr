@@ -36,6 +36,7 @@ set_flag("--show-lets", "--show-muts", "--show-bash");
 
 import "std/script.earl"; as scr
 import "std/system.earl"; as sys
+import "std/io.earl"; as io
 
 #-- All of the required programs for setup.
 @const let REQ_PROGRAMS = ["wget", "git", "earl"];
@@ -69,7 +70,7 @@ import "std/system.earl"; as sys
 @const let INSTALL_IMPORT_LOCATION = INSTALL_PREFIX+"/include/EARL";
 
 fn log(msg) {
-    println(f"[earlmgr] ----- {msg} -----");
+    println(f"----- {msg} -----");
 }
 
 @world fn install_earlmgr() {
@@ -147,6 +148,14 @@ fn log(msg) {
     sleep(500000);
 }
 
+fn create_hidden_file() {
+    log("Creating hidden config file");
+    let path = env("HOME")+"/.earlmgr";
+    $f"touch {path}";
+    log("Done");
+    sleep(500000);
+}
+
 if len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
    || len(env(f"{EARLMGR_IMPORT_LOC_ENVVAR}")) == 0 {
 
@@ -158,6 +167,7 @@ if len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
     check_installed_programs();
     install_earlmgr();
     install_earlmgr_includes();
+    create_hidden_file();
     log("Please open a new bash instance to refresh the environment and run `earlmgr`");
     exit(0);
 }
@@ -174,4 +184,13 @@ unset_flag("--show-lets", "--show-muts");
 
 import "mgr/newprog.earl"; as NP
 import "mgr/templates.earl"; as TMPLTS
+import "mgr/update-mgr.earl"; as UPTMGR
+
+# UPTMGR::update(
+#     EARLMGR_INSTALL_LOC_ENVVAR,
+#     EARLMGR_IMPORT_LOC_ENVVAR,
+#     EARLMGR_MAIN_LINK,
+#     EARLMGR_MODULE_LINKS);
+
+
 

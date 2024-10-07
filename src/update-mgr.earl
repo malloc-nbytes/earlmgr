@@ -1,0 +1,58 @@
+# MIT License
+
+# Copyright (c) 2023 malloc-nbytes
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+module UpdateEarl
+
+import "std/system.earl"; as sys
+
+@pub fn update(
+    earlmgr_install_envvar,
+    import_envvar,
+    main_link,
+    module_links) {
+    set_flag("--show-lets", "--show-bash");
+
+    println("Updating earlmgr");
+
+    let earlmgr_loc = env(earlmgr_install_envvar);
+    let modules_loc = env(import_envvar)+"/mgr/";
+    let modules = sys::ls(modules_loc);
+
+    $f"sudo rm {earlmgr_loc}/earlmgr";
+    foreach mod in modules {
+        $f"sudo rm {mod}";
+    }
+
+    $f"sudo wget -P {earlmgr_loc} {main_link}";
+    $f"sudo mv {earlmgr_loc}/earlmgr.earl {earlmgr_loc}/earlmgr";
+    $f"sudo chmod +x {earlmgr_loc}/earlmgr";
+
+    foreach link in module_links {
+        $f"sudo wget -P {modules_loc} {link}";
+    }
+
+    unset_flag("--show-lets", "--show-bash");
+
+    println("Done");
+}
+
+
