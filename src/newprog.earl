@@ -54,7 +54,7 @@ fn get_user_input(msg, possible) {
     }
 
     let f1 = open(cwd+"/main.earl", "w");
-    f1.write(Templates::main);
+    f1.write(Templates::main_template);
     f1.close();
 
     if create_changelog == 'Y' || create_changelog == 'y' {

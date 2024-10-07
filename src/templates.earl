@@ -1,7 +1,7 @@
 module Templates
 
-@pub let main =
-"mod Main
+@pub let main_template =
+"module Main
 
 # Make sure the read the docs!
 # https://github.com/malloc-nbytes/EARL/blob/main/EARL-language-reference.html

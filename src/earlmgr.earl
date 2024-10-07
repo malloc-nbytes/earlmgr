@@ -61,6 +61,7 @@ import "std/io.earl"; as io
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/templates.earl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/update-mgr.earl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/uninstall.earl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/gen-documentation.earl",
 );
 
 #-- Get the installation prefix from what is
@@ -195,6 +196,7 @@ import "mgr/newprog.earl"; as NP
 import "mgr/templates.earl"; as TMPLTS
 import "mgr/update-mgr.earl"; as UPTMGR
 import "mgr/uninstall.earl"; as UNINST
+import "mgr/gen-documentation.earl"; as DOCS
 
 @world fn _help() {
     println("Usage: earlmgr -- [options]");
@@ -204,6 +206,7 @@ import "mgr/uninstall.earl"; as UNINST
     println("    version                 Print the version information");
     println("    new                     Create a new EARL project");
     println("    uninstall               Uninstall earlmgr and all associated modules");
+    println("    docs                    Download the EARL-language-reference");
     println("    update [remote|local]   Update earlmgr and all associated modules");
     exit(0);
 }
@@ -238,6 +241,9 @@ import "mgr/uninstall.earl"; as UNINST
                 EARLMGR_INSTALL_LOC_ENVVAR,
                 EARLMGR_IMPORT_LOC_ENVVAR
             );
+        }
+        "docs" -> {
+            DOCS::gen();
         }
         "new" -> {
             NP::new_proj();
