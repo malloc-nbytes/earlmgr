@@ -74,6 +74,14 @@ import "std/system.earl"; as sys
     }
     else {
         let files = sys::ls(".").filter(|s|{return s != "./earlmgr.earl";});
+
+        # Make sure the user is in the repository.
+        foreach f in files {
+            let s = f.split(".").filter(|s|{return s != "";});
+            if len(s) <= 1 || s.rev()[0] != "earl" {
+                panic("Found a non .earl file. Are you in the correct directory?");
+            }
+        }
         foreach f in files {
             $f"sudo cp {f} {modules_loc}";
         }

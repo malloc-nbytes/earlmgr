@@ -32,7 +32,16 @@ module EARLMgr
 # BEGIN FIRST TIME SETUP
 #############################
 
-set_flag("--show-lets", "--show-muts", "--show-bash");
+#-- The environment variables that earlmgr needs to know for locations.
+@const let EARLMGR_INSTALL_LOC_ENVVAR, EARLMGR_IMPORT_LOC_ENVVAR = (
+    "EARLMGR_INSTALL_LOC",
+    "EARLMGR_IMPORT_LOC",
+);
+
+if len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
+    || len(env(f"{EARLMGR_IMPORT_LOC_ENVVAR}")) == 0 {
+    set_flag("--show-lets", "--show-muts", "--show-bash");
+}
 
 import "std/script.earl"; as scr
 import "std/system.earl"; as sys
@@ -42,12 +51,6 @@ import "std/io.earl"; as io
 
 #-- All of the required programs for setup.
 @const let REQ_PROGRAMS = ["wget", "git", "earl"];
-
-#-- The environment variables that earlmgr needs to know for locations.
-@const let EARLMGR_INSTALL_LOC_ENVVAR, EARLMGR_IMPORT_LOC_ENVVAR = (
-    "EARLMGR_INSTALL_LOC",
-    "EARLMGR_IMPORT_LOC",
-);
 
 #-- The main, most up-to-date version link.
 @const let EARLMGR_MAIN_LINK = "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/earlmgr.earl";
