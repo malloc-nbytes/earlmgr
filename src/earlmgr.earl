@@ -51,10 +51,16 @@ import "std/io.earl"; as io
 @const let EARLMGR_MAIN_LINK = "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/earlmgr.earl";
 
 #-- The required modules for earlmgr.
-@const let EARLMGR_MODULE_LINKS = (
-    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/newprog.earl",
-    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/templates.earl",
-);
+@const let EARLMGR_MODULE_LINKS = sys::ls(".")
+               .filter(|s| {
+                   # We don't want THIS file.
+                   return s != "./earlmgr.earl";
+               })
+               .map(|s| {
+                   # substr to get rid of "./"
+                   return "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/"
+                              + s.substr(2, len(s));
+               });
 
 #-- Get the installation prefix from what is
 #-- stored in the EARL installation.
