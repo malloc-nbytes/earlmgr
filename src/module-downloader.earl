@@ -1,0 +1,41 @@
+module ModuleDownloader
+
+import "std/toml.earl"; as toml
+import "std/utils.earl"; as utils
+import "std/system.earl"; as sys
+
+let git_dirs = [];
+
+fn gather_src_files(gitdir) {
+    let files = sys::ls(gitdir);
+    return files.filter(|f| {
+        return f.split(".").rev()[0] == "earl";
+    });
+}
+
+@world fn get(
+    earlmgr_install_envvar,
+    import_envvar,
+    link) {
+    println(f"dowloading: {link}");
+
+    let tmp_git_dir = "__earl-package." + str(utils::iota());
+    $f"git clone {link} --depth=1 {tmp_git_dir}";
+    $f"ls {tmp_git_dir}/config.toml" |> let config_file;
+    git_dirs.append(tmp_git_dir);
+
+    if config_file == "" {
+        panic("no TOML file found!");
+    }
+
+    let config = toml::parse(config_file);
+    toml::dump(config);
+
+    let src_files = gather_src_files(tmp_git_dir);
+
+    # if config["deps"] {
+    #     foreach l in config["deps"].unwrap() {
+    #         get(l);
+    #     }
+    # }
+}

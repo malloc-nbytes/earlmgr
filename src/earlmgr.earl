@@ -62,6 +62,7 @@ import "std/io.earl"; as io
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/update-mgr.earl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/uninstall.earl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/gen-documentation.earl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/module-downloader.earl",
 );
 
 #-- Get the installation prefix from what is
@@ -197,6 +198,7 @@ import "mgr/templates.earl"; as TMPLTS
 import "mgr/update-mgr.earl"; as UPTMGR
 import "mgr/uninstall.earl"; as UNINST
 import "mgr/gen-documentation.earl"; as DOCS
+import "mgr/module-downloader.earl"; as MD
 
 @world fn _help() {
     println("Usage: earlmgr -- [options]");
@@ -208,6 +210,7 @@ import "mgr/gen-documentation.earl"; as DOCS
     println("    uninstall               Uninstall earlmgr and all associated modules");
     println("    docs                    Download the EARL-language-reference");
     println("    update [remote|local]   Update earlmgr and all associated modules");
+    println("    module <github_link>    Download an EARL module");
     exit(0);
 }
 
@@ -234,7 +237,19 @@ import "mgr/gen-documentation.earl"; as DOCS
                 EARLMGR_INSTALL_LOC_ENVVAR,
                 EARLMGR_IMPORT_LOC_ENVVAR,
                 EARLMGR_MAIN_LINK,
-                EARLMGR_MODULE_LINKS);
+                EARLMGR_MODULE_LINKS
+            );
+        }
+        "module" -> {
+            if len(args) != 2 {
+                println("expected a github link as second argument");
+                exit(1);
+            }
+            MD::get(
+                EARLMGR_INSTALL_LOC_ENVVAR,
+                EARLMGR_IMPORT_LOC_ENVVAR,
+                args[1]
+            );
         }
         "uninstall" -> {
             UNINST::uninstall(
