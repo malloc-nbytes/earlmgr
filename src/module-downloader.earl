@@ -13,29 +13,50 @@ fn gather_src_files(gitdir) {
     });
 }
 
-@world fn get(
+@pub @world
+fn get(
     earlmgr_install_envvar,
     import_envvar,
     link) {
+    set_flag("--show-bash");
+
     println(f"dowloading: {link}");
 
     let tmp_git_dir = "__earl-package." + str(utils::iota());
     $f"git clone {link} --depth=1 {tmp_git_dir}";
     $f"ls {tmp_git_dir}/config.toml" |> let config_file;
-    git_dirs.append(tmp_git_dir);
 
     if config_file == "" {
         panic("no TOML file found!");
     }
 
     let config = toml::parse(config_file);
-    toml::dump(config);
-
     let src_files = gather_src_files(tmp_git_dir);
+
+    let import_prefix = config["config"]
+                            .unwrap()["prefix"]
+                            .unwrap();
+
+    git_dirs.append((tmp_git_dir, import_prefix));
+
+    let destination = env(import_envvar)+"/"+import_prefix;
+    $f"sudo mkdir -p {destination}";
+    foreach f in src_files {
+        $f"sudo cp {f} {destination}";
+    }
 
     # if config["deps"] {
     #     foreach l in config["deps"].unwrap() {
     #         get(l);
     #     }
     # }
+
+    println(f"Installed module: {import_prefix}");
+}
+
+@pub @world
+fn clean() {
+    foreach d, p in git_dirs {
+        $f"sudo rm -r {d}    # [{p}]";
+    }
 }

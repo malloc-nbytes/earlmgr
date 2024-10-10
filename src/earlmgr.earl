@@ -250,6 +250,7 @@ import "mgr/module-downloader.earl"; as MD
                 EARLMGR_IMPORT_LOC_ENVVAR,
                 args[1]
             );
+            MD::clean();
         }
         "uninstall" -> {
             UNINST::uninstall(
