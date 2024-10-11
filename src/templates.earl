@@ -16,6 +16,18 @@ fn main() {
 main();
 ";
 
+@pub let toml_template =
+"[owner]
+name = \"my-username\"
+github = \"github.com/my-repo\"
+
+# Prefix is what you use for importing
+# i.e.,
+#   import \"my-prefix/my-file.earl\";
+[config]
+prefix = \"my-prefix\"
+";
+
 # Changelog taken from https://gist.github.com/juampynr/4c18214a8eb554084e21d6e288a18a2c
 @pub let changelog =
 "# Change Log

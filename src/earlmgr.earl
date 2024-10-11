@@ -211,7 +211,7 @@ import "mgr/module-remover.earl"; as MR
     println("    new                     Create a new EARL project");
     println("    uninstall               Uninstall earlmgr and all associated modules");
     println("    docs                    Download the EARL-language-reference");
-    println("    update [remote|local]   Update earlmgr and all associated modules");
+    println("    update <remote|local>   Update earlmgr and all associated modules");
     println("    module <github_link>    Download an EARL module");
     println("    remove <module_name>    Remove an EARL module");
     exit(0);

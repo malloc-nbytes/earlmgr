@@ -42,9 +42,16 @@ fn get_user_input(msg, possible) {
 
 @pub fn new_proj() {
     let name = get_user_input("Enter project name: ", []);
-    let newdir = get_user_input("Create a new directory? [Y/n] ", ["Y", "y", "N", "n"]);
-    let create_changelog = get_user_input("Create a changelog? [Y/n] ", ["Y", "y", "N", "n"]);
-    let create_readme = get_user_input("Create a readme? [Y/n] ", ["Y", "y", "N", "n"]);
+    let newdir = get_user_input("Create a new directory? [y/n] ", ["Y", "y", "N", "n"]);
+    let create_changelog = get_user_input("Create a changelog? [y/n] ", ["Y", "y", "N", "n"]);
+    let create_readme = get_user_input("Create a readme? [y/n] ", ["Y", "y", "N", "n"]);
+    let init_git = get_user_input("Initialize a git repository? [y/n]", ["Y", "y", "N", "n"]);
+
+    println("earlmgr uses a .toml configuration file to get appropriate");
+    println("information to make an EARL compliant module. If you are intending");
+    println("to have other people be able to download and use your module(s)");
+    println("you should select `y`.");
+    let create_toml = get_user_input("Make this an EARL compliant module? [y/n] ", ["Y", "y", "N", "n"]);
 
     let cwd = ".";
 
@@ -53,7 +60,14 @@ fn get_user_input(msg, possible) {
         cwd = name;
     }
 
-    let f1 = open(cwd+"/main.earl", "w");
+    let main_filename = "/main.earl";
+    if create_toml == 'Y' || create_toml == 'y' {
+        main_filename = "/my-module.earl";
+        let toml_handle = open(cwd+"/config.toml", "w");
+        toml_handle.write(Templates::toml_template);
+        toml_handle.close();
+    }
+    let f1 = open(cwd+main_filename, "w");
     f1.write(Templates::main_template);
     f1.close();
 
@@ -69,6 +83,14 @@ fn get_user_input(msg, possible) {
         f3.close();
     }
 
+    if init_git == 'y' || init_git == 'Y' {
+        $f"git init {cwd}";
+    }
+
     println("Created new EARL project at `", cwd, "` with contents:");
     System::ls(cwd).foreach(|el| { println("  ", el); });
+    if create_toml == 'y' || create_toml == 'Y' {
+        println("Note: You selected to create an EARL compliant module.");
+        println("      Make sure you configure your config.toml file!");
+    }
 }
