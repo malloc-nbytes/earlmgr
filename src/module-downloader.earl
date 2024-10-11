@@ -18,7 +18,7 @@ fn get(
     earlmgr_install_envvar,
     import_envvar,
     link) {
-    set_flag("--show-bash", "--show-lets");
+    set_flag("--show-bash");
 
     println(f"dowloading: {link}");
 
@@ -27,11 +27,22 @@ fn get(
     $f"ls {tmp_git_dir}/config.toml" |> let config_file;
 
     if config_file == "" {
+        $f"sudo rm -r {tmp_git_dir}";
         panic("no TOML file found!");
     }
 
     let config = toml::parse(config_file);
     let src_files = gather_src_files(tmp_git_dir);
+
+    if !config["config"] {
+        $f"sudo rm -r {tmp_git_dir}";
+        panic(f"no `config` section found in the TOML config for {link}");
+    }
+
+    if !config["config"].unwrap()["prefix"] {
+        $f"sudo rm -r {tmp_git_dir}";
+        panic(f"no `prefix` section found in the TOML config for {link}");
+    }
 
     let import_prefix = config["config"]
                             .unwrap()["prefix"]
@@ -46,9 +57,9 @@ fn get(
     }
 
     if config["deps"] {
-        foreach l in config["deps"].unwrap() {
-            println("Gathering dependency...");
-            get(earlmgr_install_envvar, import_envvar, l[1]);
+        foreach dep_prefix, dep_link in config["deps"].unwrap() {
+            println(f"Gathering dependency [{dep_prefix}]...");
+            get(earlmgr_install_envvar, import_envvar, dep_link);
         }
     }
 
