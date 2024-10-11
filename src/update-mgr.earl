@@ -78,9 +78,7 @@ import "std/system.earl"; as sys
 
     if update_type == "remote" {
         foreach link in module_links {
-            if update_type == "remote" {
-                $f"sudo wget -P {modules_loc} {link}";
-            }
+            $f"sudo wget -P {modules_loc} {link}";
         }
     }
     else {
