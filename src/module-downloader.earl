@@ -45,11 +45,12 @@ fn get(
         $f"sudo cp {f} {destination}";
     }
 
-    # if config["deps"] {
-    #     foreach l in config["deps"].unwrap() {
-    #         get(l);
-    #     }
-    # }
+    if config["deps"] {
+        foreach l in config["deps"].unwrap() {
+            println("Gathering dependency...");
+            get(earlmgr_install_envvar, import_envvar, l[1]);
+        }
+    }
 
     println(f"Installed module: {import_prefix}");
 }

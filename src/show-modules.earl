@@ -3,6 +3,9 @@ module ShowModules
 import "std/system.earl"; as sys
 
 @pub fn show(import_envvar) {
+    let total_files = 0;
+    let total_prefixes = 0;
+
     let location = env(import_envvar);
     foreach mod in sys::ls(location) {
         let prefix = mod.split("/").rev()[0];
@@ -14,5 +17,11 @@ import "std/system.earl"; as sys
             println(f"|-- {filename} [module]");
         }
         println("*");
+
+        total_prefixes += 1;
+        total_files += len(files);
     }
+
+    println(f"Prefixes: {total_prefixes}");
+    println(f"Modules: {total_files}");
 }
