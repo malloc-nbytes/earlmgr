@@ -18,8 +18,6 @@ fn get(
     earlmgr_install_envvar,
     import_envvar,
     link) {
-    set_flag("--show-bash");
-
     println(f"dowloading: {link}");
 
     let tmp_git_dir = "__earl-package." + str(utils::iota());

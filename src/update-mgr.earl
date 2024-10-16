@@ -39,7 +39,6 @@ import "std/system.earl"; as sys
     import_envvar,
     main_link,
     module_links) {
-    set_flag("--show-bash");
 
     let local_files = sys::ls(".").filter(|s|{return s != "./earlmgr.earl";});
     if update_type == "local" {
@@ -47,7 +46,7 @@ import "std/system.earl"; as sys
         foreach f in local_files {
             let s = f.split(".").filter(|s|{return s != "";});
             if len(s) <= 1 || s.rev()[0] != "earl" {
-        	    panic("Found a non .earl file. Are you in the correct directory?");
+                panic("Found a non .earl file. Are you in the correct directory?");
             }
         }
     }
@@ -86,8 +85,6 @@ import "std/system.earl"; as sys
             $f"sudo cp {f} {modules_loc}";
         }
     }
-
-    unset_flag("--show-lets", "--show-bash");
 
     println("Done");
 }

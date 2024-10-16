@@ -27,8 +27,6 @@ import "std/system.earl"; as sys
 @pub fn uninstall(
     earlmgr_install_envvar,
     import_envvar) {
-    set_flag("--show-lets", "--show-bash");
-
     println("Removing earlmgr");
 
     let earlmgr_loc = env(earlmgr_install_envvar);
@@ -41,8 +39,6 @@ import "std/system.earl"; as sys
     }
 
     $f"sudo rm -r {modules_loc}";
-
-    unset_flag("--show-lets", "--show-bash");
 
     println("earlmgr and the associated modules are now uninstalled.");
     println("The environment variables must be removed manually however.");

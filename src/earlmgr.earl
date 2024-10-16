@@ -32,16 +32,16 @@ module EARLMgr
 # BEGIN FIRST TIME SETUP
 #############################
 
+set_flag("--show-bash");
+
 #-- The environment variables that earlmgr needs to know for locations.
 @const let EARLMGR_INSTALL_LOC_ENVVAR, EARLMGR_IMPORT_LOC_ENVVAR = (
     "EARLMGR_INSTALL_LOC",
     "EARLMGR_IMPORT_LOC",
 );
 
-if len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
-    || len(env(f"{EARLMGR_IMPORT_LOC_ENVVAR}")) == 0 {
-    set_flag("--show-lets", "--show-muts", "--show-bash");
-}
+let FIRST_TIME_SETUP = len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
+    || len(env(f"{EARLMGR_IMPORT_LOC_ENVVAR}")) == 0;
 
 import "std/script.earl"; as scr
 import "std/system.earl"; as sys
@@ -80,16 +80,12 @@ import "std/io.earl"; as io
 #-- The location for the required modules to reside.
 @const let INSTALL_IMPORT_LOCATION = INSTALL_PREFIX+"/include/EARL";
 
-fn log(msg) {
-    println(f"----- {msg} -----");
-}
-
 @world fn install_earlmgr() {
-    log("Installing earlmgr...");
+    println("Installing earlmgr...");
 
     let echo_cmd = f"echo \"export {EARLMGR_INSTALL_LOC_ENVVAR}={INSTALL_BIN_LOCATION}\" >> "+env("HOME")+"/.bashrc";
 
-    log("Allow earlmgr to modify the bashrc with the following?");
+    println("Allow earlmgr to modify the bashrc with the following?");
     println(f"    {echo_cmd}");
     let inp = input("[Y/n] > ");
     sleep(500000);
@@ -98,21 +94,21 @@ fn log(msg) {
         $echo_cmd;
     }
     else {
-        log(f"NOTE: The environment variable [export {EARLMGR_INSTALL_LOC_ENVVAR}={INSTALL_BIN_LOCATION}] must be set to use earlmgr");
+        println(f"NOTE: The environment variable [export {EARLMGR_INSTALL_LOC_ENVVAR}={INSTALL_BIN_LOCATION}] must be set to use earlmgr");
     }
 
     $f"sudo wget -P {INSTALL_BIN_LOCATION} {EARLMGR_MAIN_LINK}";
     $f"sudo mv -v {INSTALL_BIN_LOCATION}/earlmgr.earl {INSTALL_BIN_LOCATION}/earlmgr";
     $f"sudo chmod +x {INSTALL_BIN_LOCATION}/earlmgr";
-    log("Done");
+    println("Done");
     sleep(500000);
 }
 
 @world fn install_earlmgr_includes() {
-    log("Installing earlmgr modules");
+    println("Installing earlmgr modules");
 
     let echo_cmd = f"echo \"export {EARLMGR_IMPORT_LOC_ENVVAR}={INSTALL_IMPORT_LOCATION}\" >> "+env("HOME")+"/.bashrc";
-    log("Allow earlmgr to modify the bashrc with the following?");
+    println("Allow earlmgr to modify the bashrc with the following?");
     println(f"    {echo_cmd}");
     let inp = input("[Y/n] > ");
     sleep(500000);
@@ -121,9 +117,9 @@ fn log(msg) {
         $echo_cmd;
     }
     else {
-        log(f"NOTE: The environment variable [export {EARLMGR_IMPORT_LOC_ENVVAR}={INSTALL_IMPORT_LOCATION}] must be set to use earlmgr");
+        println(f"NOTE: The environment variable [export {EARLMGR_IMPORT_LOC_ENVVAR}={INSTALL_IMPORT_LOCATION}] must be set to use earlmgr");
     }
-    log("Done");
+    println("Done");
     sleep(500000);
 
     let mgr_loc = f"{INSTALL_IMPORT_LOCATION}/mgr";
@@ -133,53 +129,53 @@ fn log(msg) {
         $f"sudo wget -P {mgr_loc} {link}";
     }
 
-    log("Done");
+    println("Done");
     sleep(500000);
 }
 
 @world fn check_installed_programs() {
-    log("Checking prerequisites");
+    println("Checking prerequisites");
     foreach p in REQ_PROGRAMS {
         println(f"    ...{p}");
         if !scr::program_exists(p) {
             panic(f"{p} is required for earlmgr");
         }
     }
-    log("Ok");
+    println("Ok");
     sleep(500000);
 
-    log("Checking StdLib");
+    println("Checking StdLib");
 
     let libs = sys::ls(f"{INSTALL_PREFIX}/include/EARL/std");
     if len(libs) <= 0 {
         panic("It seems that the StdLib is not installed. How did we get here?");
     }
-    log("Ok");
+    println("Ok");
 
     sleep(500000);
 }
 
 fn create_hidden_file() {
-    log("Creating hidden config file");
+    println("Creating hidden config file");
     let path = env("HOME")+"/.earlmgr";
     $f"touch {path}";
-    log("Done");
+    println("Done");
     sleep(500000);
 }
 
-if len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
-   || len(env(f"{EARLMGR_IMPORT_LOC_ENVVAR}")) == 0 {
+if FIRST_TIME_SETUP {
+    println("========== THIS SCRIPT IS WIP! USE AT YOUR OWN RISK! ==========");
 
-    log("This seems to be the first time this script has been run.");
+    println("This seems to be the first time this script has been run.");
     sleep(1000000);
-    log("Some setup is required");
+    println("Some setup is required");
     sleep(1000000);
 
     check_installed_programs();
     install_earlmgr();
     install_earlmgr_includes();
     create_hidden_file();
-    log("Please open a new bash instance to refresh the environment and run `earlmgr`");
+    println("Please open a new bash instance to refresh the environment and run `earlmgr`");
     exit(0);
 }
 
@@ -190,8 +186,6 @@ if len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
 #############################
 # BEGIN MAIN FUNCTIONALITY
 #############################
-
-unset_flag("--show-lets", "--show-muts");
 
 # Need to import these here because these
 # are not on the system on first launch of earlmgr.
@@ -214,7 +208,10 @@ import "mgr/show-modules.earl"; as SM
     println("    uninstall               Uninstall earlmgr and all associated modules");
     println("    docs                    Download the EARL-language-reference");
     println("    update <remote|local>   Update earlmgr and all associated modules");
-    println("    module <github_link>    Download an EARL module(s)");
+    println("    | where");
+    println("    |   remote = get modules from the earlmgr github repository");
+    println("    |   local = get modules from the current directory");
+    println("    get <github_link>       Download an EARL module with dependencies");
     println("    remove <prefix>         Remove all EARL modules based on the prefix");
     println("    ls                      Show all installed EARL modules");
     exit(0);
@@ -249,7 +246,7 @@ import "mgr/show-modules.earl"; as SM
                 EARLMGR_MODULE_LINKS
             );
         }
-        "module" -> {
+        "get" -> {
             if len(args) != 2 {
                 println("expected a github link as second argument");
                 exit(1);

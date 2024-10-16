@@ -6,7 +6,6 @@ import "std/system.earl"; as sys
     earlmgr_install_envvar,
     import_envvar,
     module_prefix) {
-    set_flag("--show-bash", "--show-lets");
 
     println(f"Uninstalling {module_prefix}");
 
