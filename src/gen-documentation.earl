@@ -23,9 +23,7 @@
 module GenDocumentation
 
 @pub fn gen() {
-    println("The documentation is a .html file.");
-    let location = input("Provide a path to store it at: ");
-    $f"wget -P {location} https://raw.githubusercontent.com/malloc-nbytes/EARL/refs/heads/main/EARL-language-reference.html";
-    println("Done");
+    let link = "https://github.com/malloc-nbytes/EARL/";
+    println(f"The documentation is available at: {link}.");
 }
 
