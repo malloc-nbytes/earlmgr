@@ -58,6 +58,7 @@ import "std/colors.earl"; as clr
 
 #-- The required modules for earlmgr.
 @const let EARLMGR_MODULE_LINKS = (
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/mgrutils.earl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/newprog.earl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/templates.earl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/update-mgr.earl",

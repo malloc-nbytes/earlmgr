@@ -3,6 +3,9 @@ module ModuleDownloader
 import "std/toml.earl"; as toml
 import "std/utils.earl"; as utils
 import "std/system.earl"; as sys
+import "std/colors.earl"; as clr
+
+import "mgr/mgrutils.earl"; as mgru
 
 let git_dirs = [];
 
@@ -18,7 +21,7 @@ fn get(
     earlmgr_install_envvar,
     import_envvar,
     link) {
-    println(f"dowloading: {link}");
+    mgru::log(f"dowloading: {link}", clr::Tfc.Green);
 
     let tmp_git_dir = "__earl-package." + str(utils::iota());
     $f"git clone {link} --depth=1 {tmp_git_dir}";
@@ -56,12 +59,12 @@ fn get(
 
     if config["deps"] {
         foreach dep_prefix, dep_link in config["deps"].unwrap() {
-            println(f"Gathering dependency [{dep_prefix}]...");
+            mgru::log(f"Gathering dependency [{dep_prefix}]...", clr::Tfc.Green);
             get(earlmgr_install_envvar, import_envvar, dep_link);
         }
     }
 
-    println(f"Installed module: {import_prefix}");
+    mgru::log(f"Installed module: {import_prefix}", clr::Tfc.Green);
 }
 
 @pub @world

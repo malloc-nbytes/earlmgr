@@ -1,13 +1,16 @@
 module ModuleRemover
 
 import "std/system.earl"; as sys
+import "std/colors.earl"; as clr
+
+import "mgr/mgrutils.earl"; as mgru
 
 @pub fn remove(
     earlmgr_install_envvar,
     import_envvar,
     module_prefix) {
 
-    println(f"Uninstalling {module_prefix}");
+    mgru::log(f"Uninstalling {module_prefix}", clr::Tfc.Green);
 
     let location = env(import_envvar)+"/"+module_prefix;
     let files = sys::ls(location);
@@ -18,5 +21,5 @@ import "std/system.earl"; as sys
     }
     $f"sudo rm -r {location}";
 
-    println(f"Successfully removed all modules files for {module_prefix}");
+    mgru::log(f"Successfully removed all module files for {module_prefix}", clr::Tfc.Green);
 }
