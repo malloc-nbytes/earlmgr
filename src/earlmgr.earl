@@ -32,7 +32,7 @@ module EARLMgr
 # BEGIN FIRST TIME SETUP
 #############################
 
-set_flag("--show-bash");
+set_flag("-x");
 
 #-- The environment variables that earlmgr needs to know for locations.
 @const let EARLMGR_INSTALL_LOC_ENVVAR, EARLMGR_IMPORT_LOC_ENVVAR = (
@@ -46,6 +46,7 @@ let FIRST_TIME_SETUP = len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
 import "std/script.earl"; as scr
 import "std/system.earl"; as sys
 import "std/io.earl"; as io
+import "std/colors.earl"; as clr
 
 @const let VERSION = "0.0.1";
 
@@ -80,52 +81,69 @@ import "std/io.earl"; as io
 #-- The location for the required modules to reside.
 @const let INSTALL_IMPORT_LOCATION = INSTALL_PREFIX+"/include/EARL";
 
+fn log(msg, color) {
+    println(color, msg, clr::Te.Reset);
+}
+
 @world fn install_earlmgr() {
-    println("Installing earlmgr...");
+    log("Installing earlmgr...", clr::Tfc.Green);
 
     let echo_cmd = f"echo \"export {EARLMGR_INSTALL_LOC_ENVVAR}={INSTALL_BIN_LOCATION}\" >> "+env("HOME")+"/.bashrc";
 
-    println("Allow earlmgr to modify the bashrc with the following?");
+    log("Allow earlmgr to modify the bashrc with the following?", clr::Tfc.Green);
     println(f"    {echo_cmd}");
     let inp = input("[Y/n] > ");
     sleep(500000);
 
     if inp != "N" && inp != "n" && inp != "no" && inp != "No" {
+        if len(inp) == 0 {
+            log("Empty input, assuming `Yes`", clr::Tfc.Yellow);
+        }
         $echo_cmd;
     }
     else {
-        println(f"NOTE: The environment variable [export {EARLMGR_INSTALL_LOC_ENVVAR}={INSTALL_BIN_LOCATION}] must be set to use earlmgr");
+        log(
+            f"NOTE: The environment variable [export {EARLMGR_INSTALL_LOC_ENVVAR}={INSTALL_BIN_LOCATION}] must be set to use earlmgr",
+            clr::Tfc.Yellow
+        );
     }
 
     $f"sudo wget -P {INSTALL_BIN_LOCATION} {EARLMGR_MAIN_LINK}";
     $f"sudo mv -v {INSTALL_BIN_LOCATION}/earlmgr.earl {INSTALL_BIN_LOCATION}/earlmgr";
     $f"sudo chmod +x {INSTALL_BIN_LOCATION}/earlmgr";
-    println("Done");
+    log("Done", clr::Tfc.Green);
     sleep(500000);
 }
 
 @world fn install_earlmgr_includes() {
-    println("Installing earlmgr modules");
+    log("Installing earlmgr modules", clr::Tfc.Green);
 
     let echo_cmd = f"echo \"export {EARLMGR_IMPORT_LOC_ENVVAR}={INSTALL_IMPORT_LOCATION}\" >> "+env("HOME")+"/.bashrc";
-    println("Allow earlmgr to modify the bashrc with the following?");
+    log("Allow earlmgr to modify the bashrc with the following?", clr::Tfc.Green);
     println(f"    {echo_cmd}");
     let inp = input("[Y/n] > ");
     sleep(500000);
 
     if inp != "N" && inp != "n" && inp != "no" && inp != "No" {
+        if len(inp) == 0 {
+            log("Empty input, assuming `Yes`", clr::Tfc.Yellow);
+        }
         $echo_cmd;
     }
     else {
-        println(f"NOTE: The environment variable [export {EARLMGR_IMPORT_LOC_ENVVAR}={INSTALL_IMPORT_LOCATION}] must be set to use earlmgr");
+        log(
+            f"NOTE: The environment variable [export {EARLMGR_IMPORT_LOC_ENVVAR}={INSTALL_IMPORT_LOCATION}] must be set to use earlmgr",
+            clr::Tfc.Green
+        );
     }
-    println("Done");
+    log("Done", clr::Tfc.Green);
     sleep(500000);
 
     let mgr_loc = f"{INSTALL_IMPORT_LOCATION}/mgr";
     $f"sudo mkdir -p {mgr_loc}";
 
     foreach link in EARLMGR_MODULE_LINKS {
+        log(f"Downloading: {link}", clr::Tfc.Yellow);
         $f"sudo wget -P {mgr_loc} {link}";
     }
 
@@ -134,48 +152,48 @@ import "std/io.earl"; as io
 }
 
 @world fn check_installed_programs() {
-    println("Checking prerequisites");
+    log("Checking prerequisites", clr::Tfc.Green);
     foreach p in REQ_PROGRAMS {
         println(f"    ...{p}");
         if !scr::program_exists(p) {
             panic(f"{p} is required for earlmgr");
         }
     }
-    println("Ok");
+    log("Ok", clr::Tfc.Green);
     sleep(500000);
 
-    println("Checking StdLib");
+    log("Checking StdLib", clr::Tfc.Green);
 
     let libs = sys::ls(f"{INSTALL_PREFIX}/include/EARL/std");
     if len(libs) <= 0 {
         panic("It seems that the StdLib is not installed. How did we get here?");
     }
-    println("Ok");
+    log("Ok", clr::Tfc.Green);
 
     sleep(500000);
 }
 
 fn create_hidden_file() {
-    println("Creating hidden config file");
+    log("Creating hidden config file", clr::Tfc.Green);
     let path = env("HOME")+"/.earlmgr";
     $f"touch {path}";
-    println("Done");
+    log("Done", clr::Tfc.Green);
     sleep(500000);
 }
 
 if FIRST_TIME_SETUP {
-    println("========== THIS SCRIPT IS WIP! USE AT YOUR OWN RISK! ==========");
+    log("========== THIS SCRIPT IS WIP! USE AT YOUR OWN RISK! ==========", clr::Tfc.Yellow);
 
-    println("This seems to be the first time this script has been run.");
+    log("This seems to be the first time this script has been run.", clr::Tfc.Green);
     sleep(1000000);
-    println("Some setup is required");
+    log("Some setup is required", clr::Tfc.Green);
     sleep(1000000);
 
     check_installed_programs();
     install_earlmgr();
     install_earlmgr_includes();
     create_hidden_file();
-    println("Please open a new bash instance to refresh the environment and run `earlmgr`");
+    log("Please open a new bash instance to refresh the environment and run `earlmgr`", clr::Tfc.Green);
     exit(0);
 }
 
