@@ -1,6 +1,6 @@
 module ShowModules
 
-import "std/system.earl"; as sys
+import "std/system.rl"; as sys
 
 @pub fn show(import_envvar) {
     let total_files = 0;

@@ -22,7 +22,7 @@
 
 module Uninstall
 
-import "std/system.earl"; as sys
+import "std/system.rl"; as sys
 
 @pub fn uninstall(
     earlmgr_install_envvar,

@@ -1,18 +1,18 @@
 module ModuleDownloader
 
-import "std/toml.earl"; as toml
-import "std/utils.earl"; as utils
-import "std/system.earl"; as sys
-import "std/colors.earl"; as clr
+import "std/toml.rl"; as toml
+import "std/utils.rl"; as utils
+import "std/system.rl"; as sys
+import "std/colors.rl"; as clr
 
-import "mgr/mgrutils.earl"; as mgru
+import "mgr/mgrutils.rl"; as mgru
 
 let git_dirs = [];
 
 fn gather_src_files(gitdir) {
     let files = sys::ls(gitdir);
     return files.filter(|f| {
-        return f.split(".").rev()[0] == "earl";
+        return f.split(".").rev()[0] == "rl";
     });
 }
 

@@ -23,7 +23,7 @@ github = \"github.com/my-repo\"
 
 # Prefix is what you use for importing
 # i.e.,
-#   import \"my-prefix/my-file.earl\";
+#   import \"my-prefix/my-file.rl\";
 [config]
 prefix = \"my-prefix\"
 ";

@@ -43,10 +43,10 @@ set_flag("-x");
 let FIRST_TIME_SETUP = len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
     || len(env(f"{EARLMGR_IMPORT_LOC_ENVVAR}")) == 0;
 
-import "std/script.earl"; as scr
-import "std/system.earl"; as sys
-import "std/io.earl"; as io
-import "std/colors.earl"; as clr
+import "std/script.rl"; as scr
+import "std/system.rl"; as sys
+import "std/io.rl"; as io
+import "std/colors.rl"; as clr
 
 @const let VERSION = "0.0.1";
 
@@ -54,19 +54,19 @@ import "std/colors.earl"; as clr
 @const let REQ_PROGRAMS = ["wget", "git", "earl"];
 
 #-- The main, most up-to-date version link.
-@const let EARLMGR_MAIN_LINK = "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/earlmgr.earl";
+@const let EARLMGR_MAIN_LINK = "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/earlmgr.rl";
 
 #-- The required modules for earlmgr.
 @const let EARLMGR_MODULE_LINKS = (
-    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/mgrutils.earl",
-    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/newprog.earl",
-    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/templates.earl",
-    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/update-mgr.earl",
-    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/uninstall.earl",
-    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/gen-documentation.earl",
-    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/module-downloader.earl",
-    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/module-remover.earl",
-    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/show-modules.earl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/mgrutils.rl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/newprog.rl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/templates.rl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/update-mgr.rl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/uninstall.rl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/gen-documentation.rl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/module-downloader.rl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/module-remover.rl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/show-modules.rl",
 );
 
 #-- Get the installation prefix from what is
@@ -110,7 +110,7 @@ fn log(msg, color) {
     }
 
     $f"sudo wget -P {INSTALL_BIN_LOCATION} {EARLMGR_MAIN_LINK}";
-    $f"sudo mv -v {INSTALL_BIN_LOCATION}/earlmgr.earl {INSTALL_BIN_LOCATION}/earlmgr";
+    $f"sudo mv -v {INSTALL_BIN_LOCATION}/earlmgr.rl {INSTALL_BIN_LOCATION}/earlmgr";
     $f"sudo chmod +x {INSTALL_BIN_LOCATION}/earlmgr";
     log("Done", clr::Tfc.Green);
     sleep(500000);
@@ -208,14 +208,14 @@ if FIRST_TIME_SETUP {
 
 # Need to import these here because these
 # are not on the system on first launch of earlmgr.
-import "mgr/newprog.earl"; as NP
-import "mgr/templates.earl"; as TMPLTS
-import "mgr/update-mgr.earl"; as UPTMGR
-import "mgr/uninstall.earl"; as UNINST
-import "mgr/gen-documentation.earl"; as DOCS
-import "mgr/module-downloader.earl"; as MD
-import "mgr/module-remover.earl"; as MR
-import "mgr/show-modules.earl"; as SM
+import "mgr/newprog.rl"; as NP
+import "mgr/templates.rl"; as TMPLTS
+import "mgr/update-mgr.rl"; as UPTMGR
+import "mgr/uninstall.rl"; as UNINST
+import "mgr/gen-documentation.rl"; as DOCS
+import "mgr/module-downloader.rl"; as MD
+import "mgr/module-remover.rl"; as MR
+import "mgr/show-modules.rl"; as SM
 
 @world fn _help() {
     println("Usage: earlmgr -- [options]");

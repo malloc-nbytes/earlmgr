@@ -22,7 +22,7 @@
 
 module UpdateEarl
 
-import "std/system.earl"; as sys
+import "std/system.rl"; as sys
 
 #-- Name: update
 #-- Param: update_type: str
@@ -40,13 +40,13 @@ import "std/system.earl"; as sys
     main_link,
     module_links) {
 
-    let local_files = sys::ls(".").filter(|s|{return s != "./earlmgr.earl";});
+    let local_files = sys::ls(".").filter(|s|{return s != "./earlmgr.rl";});
     if update_type == "local" {
         # Make sure the user is in the repository.
         foreach f in local_files {
             let s = f.split(".").filter(|s|{return s != "";});
-            if len(s) <= 1 || s.rev()[0] != "earl" {
-                panic("Found a non .earl file. Are you in the correct directory?");
+            if len(s) <= 1 || s.rev()[0] != "rl" {
+                panic("Found a non .rl file. Are you in the correct directory?");
             }
         }
     }
@@ -66,12 +66,12 @@ import "std/system.earl"; as sys
 
     if update_type == "remote" {
         $f"sudo wget -P {earlmgr_loc} {main_link}";
-        $f"sudo mv {earlmgr_loc}/earlmgr.earl {earlmgr_loc}/earlmgr";
+        $f"sudo mv {earlmgr_loc}/earlmgr.rl {earlmgr_loc}/earlmgr";
         $f"sudo chmod +x {earlmgr_loc}/earlmgr";
     }
     else {
-        $f"sudo cp ./earlmgr.earl {earlmgr_loc}";
-        $f"sudo mv {earlmgr_loc}/earlmgr.earl {earlmgr_loc}/earlmgr";
+        $f"sudo cp ./earlmgr.rl {earlmgr_loc}";
+        $f"sudo mv {earlmgr_loc}/earlmgr.rl {earlmgr_loc}/earlmgr";
         $f"sudo chmod +x {earlmgr_loc}/earlmgr";
     }
 

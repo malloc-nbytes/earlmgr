@@ -1,9 +1,9 @@
 module ModuleRemover
 
-import "std/system.earl"; as sys
-import "std/colors.earl"; as clr
+import "std/system.rl"; as sys
+import "std/colors.rl"; as clr
 
-import "mgr/mgrutils.earl"; as mgru
+import "mgr/mgrutils.rl"; as mgru
 
 @pub fn remove(
     earlmgr_install_envvar,

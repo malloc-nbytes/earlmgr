@@ -22,8 +22,8 @@
 
 module NewProj
 
-import "std/system.earl";
-import "mgr/templates.earl";
+import "std/system.rl";
+import "mgr/templates.rl";
 
 fn get_user_input(msg, possible) {
     while (1) {
@@ -60,9 +60,9 @@ fn get_user_input(msg, possible) {
         cwd = name;
     }
 
-    let main_filename = "/main.earl";
+    let main_filename = "/main.rl";
     if create_toml == 'Y' || create_toml == 'y' {
-        main_filename = "/my-module.earl";
+        main_filename = "/my-module.rl";
         let toml_handle = open(cwd+"/config.toml", "w");
         toml_handle.write(Templates::toml_template);
         toml_handle.close();
