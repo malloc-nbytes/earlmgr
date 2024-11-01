@@ -16,7 +16,7 @@ import "mgr/mgrutils.rl"; as mgru
     let files = sys::ls(location);
 
     foreach f in files {
-        println(f"Removing: {f}");
+        mgru::log(f"Removing: {f}", clr::Tfc.Green);
         $f"sudo rm {f}";
     }
     $f"sudo rm -r {location}";

@@ -4,7 +4,7 @@ module Templates
 "module Main
 
 # Make sure the read the docs!
-# https://github.com/malloc-nbytes/EARL/blob/main/EARL-language-reference.html
+# https://malloc-nbytes.github.io/EARL-web/
 
 # Imports go here...
 
