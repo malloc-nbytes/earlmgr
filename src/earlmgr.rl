@@ -32,7 +32,7 @@ module EARLMgr
 # BEGIN FIRST TIME SETUP
 #############################
 
-set_flag("-x");
+# set_flag("-x");
 
 #-- The environment variables that earlmgr needs to know for locations.
 @const let EARLMGR_INSTALL_LOC_ENVVAR, EARLMGR_IMPORT_LOC_ENVVAR = (
