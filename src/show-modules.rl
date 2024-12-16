@@ -52,7 +52,7 @@ let downloaded_modules = 0;
         println(
             colors::Te.Bold,
             colors::Te.Underline,
-            f"|{s}{name}/ ({prefixes} sub-prefixes) ({modules} modules)",
+            f"|{s} {name} ({prefixes} sub-prefixes) ({modules} modules)",
             case downloaded of { true = " [third-party]"; _ = ""; },
             case stdlib of { true = " " + colors::Te.Invert + "[StdLib]"; _ = ""; },
             case earlmgr of { true = " " + colors::Te.Invert + "[EARLMgr]"; _ = ""; },
@@ -65,7 +65,7 @@ let downloaded_modules = 0;
     }
     else if name.split(".").back() == "rl" {
         println(
-            f"|{s}{name} ..... ",
+            f"|{s} {name} ..... ",
             colors::Te.Italic,
             f"import \"{concat_path}{name}\";",
             colors::Te.Reset
