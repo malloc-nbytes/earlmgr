@@ -32,7 +32,10 @@ module EARLMgr
 # BEGIN FIRST TIME SETUP
 #############################
 
-# set_flag("-x");
+import "std/script.rl"; as scr
+import "std/system.rl"; as sys
+import "std/io.rl"; as io
+import "std/colors.rl"; as clr
 
 #-- The environment variables that earlmgr needs to know for locations.
 @const let EARLMGR_INSTALL_LOC_ENVVAR, EARLMGR_IMPORT_LOC_ENVVAR = (
@@ -40,13 +43,8 @@ module EARLMgr
     "EARLMGR_IMPORT_LOC",
 );
 
-let FIRST_TIME_SETUP = len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
-    || len(env(f"{EARLMGR_IMPORT_LOC_ENVVAR}")) == 0;
-
-import "std/script.rl"; as scr
-import "std/system.rl"; as sys
-import "std/io.rl"; as io
-import "std/colors.rl"; as clr
+let FIRST_TIME_SETUP = (len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
+    || len(env(f"{EARLMGR_IMPORT_LOC_ENVVAR}")) == 0) || !sys::ls(env("HOME")).map(|k| { return k.split("/").back(); }).contains(".earlmgr");
 
 @const let VERSION = "0.0.1";
 
