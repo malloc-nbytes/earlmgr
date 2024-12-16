@@ -17,7 +17,7 @@ import "mgr/mgrutils.rl"; as mgru
 
     foreach f in files {
         mgru::log(f"Removing: {f}", clr::Tfc.Green);
-        $f"sudo rm {f}";
+        $f"sudo rm -r {f}";
     }
     $f"sudo rm -r {location}";
 

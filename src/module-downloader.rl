@@ -9,16 +9,8 @@ import "mgr/mgrutils.rl"; as mgru
 
 let git_dirs = [];
 
-fn gather_src_files(gitdir) {
-    let files = sys::ls(gitdir);
-    return files.filter(|f| {
-        return f.split(".").rev()[0] == "rl";
-    });
-}
-
-fn prefix_already_exists(import_loc, depname) {
+@pub fn prefix_already_exists(import_loc, depname) {
     foreach f in sys::ls(import_loc) {
-        println("  ", sys::isdir(f), ' ', f, " == ", depname);
         if sys::isdir(f) && f.split("/").filter(|k|{k != "";}).back() == depname {
             return true;
         }
@@ -46,7 +38,6 @@ fn get(
     }
 
     let config = toml::parse(config_file);
-    let src_files = gather_src_files(tmp_git_dir);
 
     if !config["config"] {
         $f"sudo rm -r {tmp_git_dir}";
@@ -65,10 +56,7 @@ fn get(
     git_dirs.append((tmp_git_dir, import_prefix));
 
     let destination = import_loc+"/"+import_prefix;
-    $f"sudo mkdir -p {destination}";
-    foreach f in src_files {
-        $f"sudo cp {f} {destination}";
-    }
+    $f"sudo mv {tmp_git_dir} {destination}";
 
     if config["deps"] {
         foreach dep_prefix, dep_link in config["deps"].unwrap() {

@@ -23,6 +23,69 @@
 module UpdateEarl
 
 import "std/system.rl"; as sys
+import "std/io.rl"; as io
+import "std/colors.rl"; as colors
+import "std/parsers/toml.rl"; as toml
+
+import "mgr/module-downloader.rl"; as MD
+import "mgr/mgrutils.rl"; as MGRU
+
+fn update_toml(dir, import_envvar, earlmgr_install_envvar) {
+    MGRU::log("Checking TOML changes...", colors::Tfc.Green);
+    let import_loc = env(import_envvar);
+    let config = toml::parse(dir+"/config.toml");
+
+    if config["deps"] {
+        foreach prefix, link in config["deps"].unwrap() {
+            if !MD::prefix_already_exists(import_loc, prefix) {
+                MGRU::log(f"Dep. `{prefix}` is new and will be downloaded", colors::Tfc.Yellow);
+                MD::get(earlmgr_install_envvar, import_envvar, link);
+            }
+            else {
+                MGRU::log(f"Prefix `{prefix}` is already downloaded", colors::Tfc.Green);
+            }
+        }
+    }
+}
+
+fn update_third_party_modules(import_envvar, earlmgr_install_envvar) {
+    let prefixes = sys::ls(env(import_envvar)).filter(|p| {
+        with name = p.split("/").filter(|k|{k != "";}).back() in
+        return name != "std" && name != "mgr";
+    });
+
+    foreach dir in prefixes {
+        if !sys::isdir(dir) { continue; }
+
+        cd(dir);
+
+        let name = dir.split("/").back();
+
+        $"git rev-parse --abbrev-ref HEAD" |> let current_branch;
+        $"git fetch origin" |> let _;
+        $f"git rev-parse {current_branch}" |> let local_commit;
+        $f"git rev-parse origin/{current_branch}" |> let remote_commit;
+        $f"git merge-base {current_branch} origin/{current_branch}" |> let base_commit;
+
+        if local_commit == remote_commit {
+            MGRU::log(f"Prefix `{name}` is up to date.", colors::Tfc.Green);
+        }
+        else if local_commit == base_commit {
+            MGRU::log(f"Prefix `{name}` is behind, pulling changes...", colors::Tfc.Yellow);
+            $f"git pull";
+            update_toml(dir, import_envvar, earlmgr_install_envvar);
+            MGRU::log("Done", colors::Tfc.Green);
+        }
+        else if remote_commit == base_commit {
+            MGRU::log(f"Prefix `{name}` is ahead of remote, either restore changes or push.", colors::Tfc.Yellow);
+            println(f"    {dir}");
+        }
+        else {
+            MGRU::log(f"Prefix `{name}` has diverged from the remote. Manual intervention needed...", colors::Tfc.Red);
+            println(f"    {dir}");
+        }
+    }
+}
 
 #-- Name: update
 #-- Param: update_type: str
@@ -40,6 +103,13 @@ import "std/system.rl"; as sys
     main_link,
     module_links) {
 
+    assert(update_type == "remote" || update_type == "local" || update_type == "modules");
+
+    if update_type == "modules" {
+        update_third_party_modules(import_envvar, earlmgr_install_envvar);
+        return;
+    }
+
     set_flag("-x");
 
     let local_files = sys::ls(".").filter(|s|{return s != "./earlmgr.rl";});
@@ -53,17 +123,17 @@ import "std/system.rl"; as sys
         }
     }
 
-    assert(update_type == "remote" || update_type == "local");
-
-    println("Updating earlmgr");
-
     let earlmgr_loc = env(earlmgr_install_envvar);
     let modules_loc = env(import_envvar)+"/mgr/";
     let modules = sys::ls(modules_loc);
 
-    $f"sudo rm {earlmgr_loc}/earlmgr";
-    foreach mod in modules {
-        $f"sudo rm {mod}";
+    if update_type == "remote" || update_type == "local" {
+        println("Updating earlmgr");
+
+        $f"sudo rm {earlmgr_loc}/earlmgr";
+        foreach mod in modules {
+            $f"sudo rm {mod}";
+        }
     }
 
     if update_type == "remote" {
@@ -71,7 +141,7 @@ import "std/system.rl"; as sys
         $f"sudo mv {earlmgr_loc}/earlmgr.rl {earlmgr_loc}/earlmgr";
         $f"sudo chmod +x {earlmgr_loc}/earlmgr";
     }
-    else {
+    else if update_type == "local" {
         $f"sudo cp ./earlmgr.rl {earlmgr_loc}";
         $f"sudo mv {earlmgr_loc}/earlmgr.rl {earlmgr_loc}/earlmgr";
         $f"sudo chmod +x {earlmgr_loc}/earlmgr";
@@ -82,7 +152,7 @@ import "std/system.rl"; as sys
             $f"sudo wget -P {modules_loc} {link}";
         }
     }
-    else {
+    else if update_type == "local" {
         foreach f in local_files {
             $f"sudo cp {f} {modules_loc}";
         }

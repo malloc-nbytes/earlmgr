@@ -14,7 +14,7 @@ let downloaded_modules = 0;
 
     with name = loc.split("/").back() in
 
-    if sys::isdir(loc) {
+    if sys::isdir(loc) && name[0] != '.' {
         if depth == 0 && first_time {
             println("|");
         }
@@ -52,7 +52,7 @@ let downloaded_modules = 0;
         println(
             colors::Te.Bold,
             colors::Te.Underline,
-            f"|{s}{name}/ [Prefix] ({prefixes} sub-prefixes) ({modules} modules)",
+            f"|{s}{name}/ ({prefixes} sub-prefixes) ({modules} modules)",
             case downloaded of { true = " [third-party]"; _ = ""; },
             case stdlib of { true = " " + colors::Te.Invert + "[StdLib]"; _ = ""; },
             case earlmgr of { true = " " + colors::Te.Invert + "[EARLMgr]"; _ = ""; },
@@ -63,12 +63,11 @@ let downloaded_modules = 0;
             walk(f, depth+1, import_envvar, concat_path+name+"/");
         }
     }
-    else {
-        # println(f"|{s}{name} [Module] { import \"{concat_path}{name}\" }");
+    else if name.split(".").back() == "rl" {
         println(
-            f"|{s}{name} [Module] ..... ",
+            f"|{s}{name} ..... ",
             colors::Te.Italic,
-            f"import \"{concat_path}{name}\"",
+            f"import \"{concat_path}{name}\";",
             colors::Te.Reset
         );
         total_modules += 1;

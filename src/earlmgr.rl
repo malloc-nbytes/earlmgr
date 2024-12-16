@@ -276,7 +276,7 @@ import "mgr/show-modules.rl"; as SM
                 EARLMGR_IMPORT_LOC_ENVVAR,
                 args[1]
             );
-            MD::clean();
+            # MD::clean();
         }
         "remove" -> {
             if len(args) != 2 {
