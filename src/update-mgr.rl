@@ -40,6 +40,8 @@ import "std/system.rl"; as sys
     main_link,
     module_links) {
 
+    set_flag("-x");
+
     let local_files = sys::ls(".").filter(|s|{return s != "./earlmgr.rl";});
     if update_type == "local" {
         # Make sure the user is in the repository.

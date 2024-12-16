@@ -1,6 +1,6 @@
 module ModuleDownloader
 
-import "std/toml.rl"; as toml
+import "std/parsers/toml.rl"; as toml
 import "std/utils.rl"; as utils
 import "std/system.rl"; as sys
 import "std/colors.rl"; as clr
