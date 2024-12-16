@@ -26,6 +26,7 @@ import "std/system.rl"; as sys
 import "std/io.rl"; as io
 import "std/colors.rl"; as colors
 import "std/parsers/toml.rl"; as toml
+import "std/time.rl"; as time
 
 import "mgr/module-downloader.rl"; as MD
 import "mgr/mgrutils.rl"; as MGRU
@@ -54,12 +55,19 @@ fn update_third_party_modules(import_envvar, earlmgr_install_envvar) {
         return name != "std" && name != "mgr";
     });
 
+    with first = false in
+
     foreach dir in prefixes {
         if !sys::isdir(dir) { continue; }
+
+        if first { println("|"); }
+        else { first = true; }
 
         cd(dir);
 
         let name = dir.split("/").back();
+
+        MGRU::log(f"| Checking: {name}", colors::Tfc.Green);
 
         $"git rev-parse --abbrev-ref HEAD" |> let current_branch;
         $"git fetch origin" |> let _;
@@ -67,21 +75,26 @@ fn update_third_party_modules(import_envvar, earlmgr_install_envvar) {
         $f"git rev-parse origin/{current_branch}" |> let remote_commit;
         $f"git merge-base {current_branch} origin/{current_branch}" |> let base_commit;
 
+        MGRU::log(f"| local hash: {local_commit}", colors::Tfc.White);
+        MGRU::log(f"| remote hash: {remote_commit}", colors::Tfc.White);
+        MGRU::log(f"| base hash: {base_commit}", colors::Tfc.White);
+
         if local_commit == remote_commit {
-            MGRU::log(f"Prefix `{name}` is up to date.", colors::Tfc.Green);
+            MGRU::log(f"|-- Up to date.", colors::Tfc.Green + colors::Te.Bold);
+            print(colors::Te.Reset);
         }
         else if local_commit == base_commit {
-            MGRU::log(f"Prefix `{name}` is behind, pulling changes...", colors::Tfc.Yellow);
+            MGRU::log(f"|<- Behind, pulling changes...", colors::Tfc.Yellow);
             $f"git pull";
             update_toml(dir, import_envvar, earlmgr_install_envvar);
             MGRU::log("Done", colors::Tfc.Green);
         }
         else if remote_commit == base_commit {
-            MGRU::log(f"Prefix `{name}` is ahead of remote, either restore changes or push.", colors::Tfc.Yellow);
+            MGRU::log(f"|-> Ahead of remote, either restore changes or push.", colors::Tfc.Yellow);
             println(f"    {dir}");
         }
         else {
-            MGRU::log(f"Prefix `{name}` has diverged from the remote. Manual intervention needed...", colors::Tfc.Red);
+            MGRU::log(f"|-x Diverged from the remote. Manual intervention needed...", colors::Tfc.Red);
             println(f"    {dir}");
         }
     }
