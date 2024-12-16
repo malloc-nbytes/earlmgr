@@ -16,11 +16,24 @@ fn gather_src_files(gitdir) {
     });
 }
 
+fn prefix_already_exists(import_loc, depname) {
+    foreach f in sys::ls(import_loc) {
+        println("  ", sys::isdir(f), ' ', f, " == ", depname);
+        if sys::isdir(f) && f.split("/").filter(|k|{k != "";}).back() == depname {
+            return true;
+        }
+    }
+    return false;
+}
+
 @pub @world
 fn get(
     earlmgr_install_envvar,
     import_envvar,
     link) {
+
+    let import_loc = env(import_envvar);
+
     mgru::log(f"dowloading: {link}", clr::Tfc.Green);
 
     let tmp_git_dir = "__earl-package." + str(utils::iota());
@@ -51,7 +64,7 @@ fn get(
 
     git_dirs.append((tmp_git_dir, import_prefix));
 
-    let destination = env(import_envvar)+"/"+import_prefix;
+    let destination = import_loc+"/"+import_prefix;
     $f"sudo mkdir -p {destination}";
     foreach f in src_files {
         $f"sudo cp {f} {destination}";
@@ -60,7 +73,12 @@ fn get(
     if config["deps"] {
         foreach dep_prefix, dep_link in config["deps"].unwrap() {
             mgru::log(f"Gathering dependency [{dep_prefix}]...", clr::Tfc.Green);
-            get(earlmgr_install_envvar, import_envvar, dep_link);
+            if !prefix_already_exists(import_loc, dep_prefix) {
+                get(earlmgr_install_envvar, import_envvar, dep_link);
+            }
+            else {
+                mgru::log(f"Dependency [{dep_prefix}] is already downloaded", clr::Tfc.Yellow);
+            }
         }
     }
 

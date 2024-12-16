@@ -221,18 +221,19 @@ import "mgr/show-modules.rl"; as SM
     println("Usage: earlmgr -- [options]");
     println();
     println("Options:");
-    println("    help                    Prints this message");
-    println("    version                 Print the version information");
-    println("    new                     Create a new EARL project");
-    println("    uninstall               Uninstall earlmgr and all associated modules");
-    println("    docs                    Download the EARL-language-reference");
-    println("    update <remote|local>   Update earlmgr and all associated modules");
+    println("    help                          Prints this message");
+    println("    version                       Print the version information");
+    println("    new                           Create a new EARL project");
+    println("    uninstall                     Uninstall earlmgr and all associated modules");
+    println("    docs                          Download the EARL-language-reference");
+    println("    update <remote|local|modules> Update earlmgr and all associated modules");
     println("    | where");
     println("    |   remote = get modules from the earlmgr github repository");
     println("    |   local = get modules from the current directory");
-    println("    get <github_link>       Download an EARL module with dependencies");
-    println("    remove <prefix>         Remove all EARL modules based on the prefix");
-    println("    ls                      Show all installed EARL modules");
+    println("    |   modules = update all third-party modules");
+    println("    get <github_link>             Download an EARL module with dependencies");
+    println("    remove <prefix>               Remove all EARL modules based on the prefix");
+    println("    ls                            Show all installed EARL modules");
     exit(0);
 }
 
@@ -253,8 +254,8 @@ import "mgr/show-modules.rl"; as SM
             SM::show(EARLMGR_IMPORT_LOC_ENVVAR);
         }
         "update" -> {
-            if len(args) != 2  || (args[1] != "remote" && args[1] != "local") {
-                println("expected either remote or local as a second argument");
+            if len(args) != 2  || (args[1] != "remote" && args[1] != "local" && args[1] != "modules") {
+                println("expected either remote, local, or modules as a second argument");
                 exit(1);
             }
             UPTMGR::update(
