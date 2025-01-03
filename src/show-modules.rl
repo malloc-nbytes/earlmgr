@@ -78,6 +78,17 @@ let downloaded_modules = 0;
 fn show(import_envvar) {
     let location = env(import_envvar);
 
+    $"earl --is-portable" |> let portable;
+    if portable == "YES" {
+        println(
+            colors::Te.Bold,
+            colors::Te.Underline,
+            "| [StdLib] builtin (due to EARL portable)",
+            colors::Te.Reset,
+            "\n|"
+        );
+    }
+
     foreach f in sys::ls(location) {
         walk(f, 0, import_envvar, "");
     }
