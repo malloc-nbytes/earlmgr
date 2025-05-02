@@ -8,6 +8,11 @@ let total_prefixes = 0;
 let total_modules = 0;
 let downloaded_modules = 0;
 
+fn contains_rl(dir) {
+    let lst = sys::get_all_files_by_ext(dir, "rl");
+    return len(lst) > 0;
+}
+
 @world fn walk(loc, depth, import_envvar, concat_path) {
     let s, spaces = ("", "");
     for i in 0 to depth { s += "--"; spaces += "  "; }
@@ -26,10 +31,11 @@ let downloaded_modules = 0;
         let modules, prefixes = (0, 0);
 
         foreach f in contents {
-            if sys::isdir(f) {
+            with parts = f.split(".") in
+            if sys::isdir(f) && contains_rl(f) {
                 prefixes += 1;
             }
-            else {
+            else if parts[len(parts)-1] == "rl" {
                 modules += 1;
             }
         }
