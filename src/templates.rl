@@ -8,10 +8,27 @@ module Templates
 
 # Imports go here...
 
+# NOTE: The three hashtags are for earlmgr -- index.
+#       It is needed per function/class/method etc
+#       for index generation. It is optional to add these,
+#       but if you don't, the indexer will not be able
+#       to parse things. Also, the doc-comments are needed
+#       in this format to also parse correctly.
+#       See [INSERT LINK HERE] for more parsing information.
+
+### Function
+#-- Name: main
+#-- Parameter: argc: int
+#-- Parameter: argv: list<str>
+#-- Returns: int
+#-- Description:
+#--   Prints `hello world` to stdout and
+#--   returns 0 on exit.
 fn main() {
     println(\"Hello EARL!\");
     return 0;
 }
+### End
 
 main();
 ";

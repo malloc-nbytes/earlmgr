@@ -481,10 +481,13 @@ fn iterdir(path) {
     return [];
 }
 
-@pub fn gen_index(searchpaths: list) {
+@pub fn gen_index(searchpaths: list, local: bool): unit {
     $"earl --install-prefix" |> let main_prefix;
     let prefix = main_prefix.split("at ")[1];
-    let paths = searchpaths.map(|p| { f"{prefix}/include/EARL/{p}"; });
+    let paths = case local of {
+        true = searchpaths;
+        _    = searchpaths.map(|p| { f"{prefix}/include/EARL/{p}"; });
+    };
 
     let modules = [];
     let entries = [];

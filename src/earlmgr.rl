@@ -228,7 +228,8 @@ import "mgr/index.rl"; as IND
     println("    new                           Create a new EARL project");
     println("    uninstall                     Uninstall earlmgr and all associated modules");
     println("    docs                          Download the EARL-language-reference");
-    println("    index <p1, p2, ..., pN>       Index file(s) in std or thirdparty modules");
+    println("    index <p1, p2, ..., pN>       Index file(s) in std or thirdparty modules (experimental)");
+    println("    indexlocal <p1, p2, ..., pN>  Index local file(s) (experimental)");
     println("    update <remote|local|modules> Update earlmgr and all associated modules");
     println("    | where");
     println("    |   remote = get modules from the earlmgr github repository");
@@ -274,7 +275,14 @@ import "mgr/index.rl"; as IND
                 println("expected >= 1 paths");
                 exit(1);
             }
-            IND::gen_index(argv()[1:]);
+            IND::gen_index(argv()[1:], false);
+        }
+        "indexlocal" -> {
+            if len(args) < 2 {
+                println("expected >= 1 paths");
+                exit(1);
+            }
+            IND::gen_index(argv()[1:], true);
         }
         "get" -> {
             if len(args) != 2 {
