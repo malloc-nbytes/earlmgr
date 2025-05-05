@@ -67,6 +67,7 @@ let FIRST_TIME_SETUP = (len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/module-downloader.rl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/module-remover.rl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/show-modules.rl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/index.rl",
 );
 
 #-- Get the installation prefix from what is
@@ -216,6 +217,7 @@ import "mgr/gen-documentation.rl"; as DOCS
 import "mgr/module-downloader.rl"; as MD
 import "mgr/module-remover.rl"; as MR
 import "mgr/show-modules.rl"; as SM
+import "mgr/index.rl"; as IND
 
 @world fn _help() {
     println("Usage: earlmgr -- [options]");
@@ -226,6 +228,7 @@ import "mgr/show-modules.rl"; as SM
     println("    new                           Create a new EARL project");
     println("    uninstall                     Uninstall earlmgr and all associated modules");
     println("    docs                          Download the EARL-language-reference");
+    println("    index <p1, p2, ..., pN>       Index file(s) in std or thirdparty modules");
     println("    update <remote|local|modules> Update earlmgr and all associated modules");
     println("    | where");
     println("    |   remote = get modules from the earlmgr github repository");
@@ -265,6 +268,13 @@ import "mgr/show-modules.rl"; as SM
                 EARLMGR_MAIN_LINK,
                 EARLMGR_MODULE_LINKS
             );
+        }
+        "index" -> {
+            if len(args) < 2 {
+                println("expected >= 1 paths");
+                exit(1);
+            }
+            IND::gen_index(argv()[1:]);
         }
         "get" -> {
             if len(args) != 2 {
