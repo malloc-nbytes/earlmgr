@@ -14,7 +14,7 @@ module Templates
 #       but if you don't, the indexer will not be able
 #       to parse things. Also, the doc-comments are needed
 #       in this format to also parse correctly.
-#       See [INSERT LINK HERE] for more parsing information.
+#       See [ https://malloc-nbytes.github.io/EARL-web/earlmgr ] for more parsing information.
 
 ### Function
 #-- Name: main
