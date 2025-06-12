@@ -67,6 +67,7 @@ let FIRST_TIME_SETUP = (len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/module-downloader.rl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/module-remover.rl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/show-modules.rl",
+    "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/get-module-info.rl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/index.rl",
 );
 
@@ -218,6 +219,7 @@ import "mgr/module-downloader.rl"; as MD
 import "mgr/module-remover.rl"; as MR
 import "mgr/show-modules.rl"; as SM
 import "mgr/index.rl"; as IND
+import "mgr/get-module-info.rl"; as GMI
 
 @world fn _help() {
     println("Usage: earlmgr -- [options]");
@@ -237,6 +239,7 @@ import "mgr/index.rl"; as IND
     println("    |   modules = update all third-party modules");
     println("    get <github_link>             Download an EARL module with dependencies");
     println("    remove <prefix>               Remove all EARL modules based on the prefix");
+    println("    info <prefix>                 Get info on a EARL module");
     println("    ls                            Show all installed EARL modules");
     exit(0);
 }
@@ -312,6 +315,13 @@ import "mgr/index.rl"; as IND
                 EARLMGR_INSTALL_LOC_ENVVAR,
                 EARLMGR_IMPORT_LOC_ENVVAR
             );
+        }
+        "info" -> {
+            if len(args) != 2 {
+                println("expected an EARL module name as second argument");
+                exit(1);
+            }
+            GMI::get_module_info(args[1], EARLMGR_IMPORT_LOC_ENVVAR);
         }
         "docs" -> {
             DOCS::gen();
