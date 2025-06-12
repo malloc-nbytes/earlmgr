@@ -25,7 +25,7 @@ module GetModuleInfo
 import "std/system.rl"; as sys
 import "std/colors.rl";
 import "std/parsers/toml.rl";
-import "mgrutils.rl"; as utils
+import "mgr/mgrutils.rl"; as utils
 
 @pub fn get_module_info(modname: str, import_envvar: str): unit {
     if modname == "mgr" || modname == "std" {
