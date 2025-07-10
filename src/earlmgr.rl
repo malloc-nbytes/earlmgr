@@ -37,6 +37,24 @@ import "std/system.rl"; as sys
 import "std/io.rl"; as io
 import "std/colors.rl"; as clr
 
+let FIRST_TIME_SETUP = false;
+
+try {
+    import "mgr/newprog.rl"; as NP
+    import "mgr/templates.rl"; as TMPLTS
+    import "mgr/update-mgr.rl"; as UPTMGR
+    import "mgr/uninstall.rl"; as UNINST
+    import "mgr/gen-documentation.rl"; as DOCS
+    import "mgr/module-downloader.rl"; as MD
+    import "mgr/module-remover.rl"; as MR
+    import "mgr/show-modules.rl"; as SM
+    import "mgr/index.rl"; as IND
+    import "mgr/get-module-info.rl"; as GMI
+} catch e {
+    println(f"ERROR: {e}");
+    FIRST_TIME_SETUP = true;
+}
+
 #-- The environment variables that earlmgr needs to know for locations.
 @const let EARLMGR_INSTALL_LOC_ENVVAR, EARLMGR_IMPORT_LOC_ENVVAR = (
     "EARLMGR_INSTALL_LOC",
@@ -49,12 +67,6 @@ import "std/colors.rl"; as clr
                                 .split(" ")
                                 .rev()[0]
                                 .filter(|s|{return s != '\n';});
-
-let FIRST_TIME_SETUP = sys::ls(INSTALL_PREFIX + "/include/EARL/").contains(INSTALL_PREFIX + "/include/EARL/mgr");
-# let FIRST_TIME_SETUP = (len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
-#     || len(env(f"{EARLMGR_IMPORT_LOC_ENVVAR}")) == 0)
-#     || !sys::ls(env("HOME"))
-#            .map(|k| { return k.split("/").back(); }).contains(".earlmgr");
 
 @const let VERSION = "0.0.1";
 
@@ -212,19 +224,6 @@ if FIRST_TIME_SETUP {
 #############################
 # BEGIN MAIN FUNCTIONALITY
 #############################
-
-# Need to import these here because these
-# are not on the system on first launch of earlmgr.
-import "mgr/newprog.rl"; as NP
-import "mgr/templates.rl"; as TMPLTS
-import "mgr/update-mgr.rl"; as UPTMGR
-import "mgr/uninstall.rl"; as UNINST
-import "mgr/gen-documentation.rl"; as DOCS
-import "mgr/module-downloader.rl"; as MD
-import "mgr/module-remover.rl"; as MR
-import "mgr/show-modules.rl"; as SM
-import "mgr/index.rl"; as IND
-import "mgr/get-module-info.rl"; as GMI
 
 @world fn _help() {
     println("Usage: earlmgr -- [options]");
