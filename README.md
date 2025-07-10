@@ -13,7 +13,7 @@ the instructions below.
 
 ```
 cd src
-earl ./earlmgr
+earl ./earlmgr.rl
 ```
 
 ## Updating
