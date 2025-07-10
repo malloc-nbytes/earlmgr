@@ -95,7 +95,7 @@ fn log(msg, color) {
 
     log("Allow earlmgr to modify the bashrc with the following?", clr::Tfc.Green);
     println(f"    {echo_cmd}");
-    let inp = input("[Y/n] > ");
+    let inp = REPL_input("[Y/n] > ");
     sleep(500000);
 
     if inp != "N" && inp != "n" && inp != "no" && inp != "No" {
@@ -124,7 +124,7 @@ fn log(msg, color) {
     let echo_cmd = f"echo \"export {EARLMGR_IMPORT_LOC_ENVVAR}={INSTALL_IMPORT_LOCATION}\" >> "+env("HOME")+"/.bashrc";
     log("Allow earlmgr to modify the bashrc with the following?", clr::Tfc.Green);
     println(f"    {echo_cmd}");
-    let inp = input("[Y/n] > ");
+    let inp = REPL_input("[Y/n] > ");
     sleep(500000);
 
     if inp != "N" && inp != "n" && inp != "no" && inp != "No" {
