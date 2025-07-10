@@ -43,10 +43,18 @@ import "std/colors.rl"; as clr
     "EARLMGR_IMPORT_LOC",
 );
 
-let FIRST_TIME_SETUP = (len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
-    || len(env(f"{EARLMGR_IMPORT_LOC_ENVVAR}")) == 0)
-    || !sys::ls(env("HOME"))
-           .map(|k| { return k.split("/").back(); }).contains(".earlmgr");
+#-- Get the installation prefix from what is
+#-- stored in the EARL installation.
+@const let INSTALL_PREFIX = sys::cmdstr("earl --install-prefix")
+                                .split(" ")
+                                .rev()[0]
+                                .filter(|s|{return s != '\n';});
+
+let FIRST_TIME_SETUP = sys::ls(INSTALL_PREFIX + "/include/EARL/").contains(INSTALL_PREFIX + "/include/EARL/mgr");
+# let FIRST_TIME_SETUP = (len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
+#     || len(env(f"{EARLMGR_IMPORT_LOC_ENVVAR}")) == 0)
+#     || !sys::ls(env("HOME"))
+#            .map(|k| { return k.split("/").back(); }).contains(".earlmgr");
 
 @const let VERSION = "0.0.1";
 
@@ -70,13 +78,6 @@ let FIRST_TIME_SETUP = (len(env(f"{EARLMGR_INSTALL_LOC_ENVVAR}")) == 0
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/get-module-info.rl",
     "https://raw.githubusercontent.com/malloc-nbytes/earlmgr/refs/heads/main/src/index.rl",
 );
-
-#-- Get the installation prefix from what is
-#-- stored in the EARL installation.
-@const let INSTALL_PREFIX = sys::cmdstr("earl --install-prefix")
-                                .split(" ")
-                                .rev()[0]
-                                .filter(|s|{return s != '\n';});
 
 #-- The location for the earlmgr script to reside.
 @const let INSTALL_BIN_LOCATION = INSTALL_PREFIX+"/bin";
